@@ -2,13 +2,13 @@ package com.goldgrother.repeatmana.Activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -28,6 +28,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -39,7 +41,7 @@ public class Act_MainScreen extends AppCompatActivity {
 
     private Context ctxt = Act_MainScreen.this;
     private HttpConnection con;
-    public UserAccount user = Act_Login.user;
+    public static UserAccount user = Act_Login.user;
     // UI
     private Button bt_untreated, bt_processing, bt_completed;
     private ListView lv_problems;
@@ -51,6 +53,7 @@ public class Act_MainScreen extends AppCompatActivity {
     private static final String Untreated = "0";
     private static final String Processing = "1";
     private static final String Completed = "2";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,8 +93,10 @@ public class Act_MainScreen extends AppCompatActivity {
             try {
                 // put "phone" post out, get json
                 List<NameValuePair> postFields = new ArrayList<>();
-                postFields.add(new BasicNameValuePair("mday", getCurrentDate()));
+                postFields.add(new BasicNameValuePair("startday", getCurrentDateStart(status)));
+                postFields.add(new BasicNameValuePair("endday", getCurrentDateEnd()));
                 postFields.add(new BasicNameValuePair("status", status));
+                postFields.add(new BasicNameValuePair("dormid", user.getDormID()));
                 JSONObject jobj = con.PostGetJson(URLs.url_loadingproblem, postFields);
                 if (jobj != null) {
                     result = jobj.getInt("success");
@@ -112,7 +117,6 @@ public class Act_MainScreen extends AppCompatActivity {
                             fproblem.setSatisfactionDegree(ajobj.getString("SatisfactionDegree"));
                             problemlist.add(fproblem);
                         }
-
                     }
                 }
 
@@ -149,9 +153,17 @@ public class Act_MainScreen extends AppCompatActivity {
         }
     }
 
-    private String getCurrentDate() {
-        Calendar c = Calendar.getInstance();
-        return c.get(Calendar.YEAR) + "-" + (c.get(Calendar.MONTH) + 1) + "-" + c.get(Calendar.DAY_OF_MONTH);
+    private String getCurrentDateStart(String status) {
+        Calendar calendar = Calendar.getInstance();
+        if (status.equals(Completed)) {
+            calendar.add(Calendar.MONTH, -1);
+        }
+        return new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()) + " 00:00:00";
+    }
+
+    private String getCurrentDateEnd() {
+        SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return sdFormat.format(new java.util.Date()) + " 23:59:59";
     }
 
     private void InitialAction() {
@@ -170,6 +182,11 @@ public class Act_MainScreen extends AppCompatActivity {
                 LoadingProblem(Completed);
             }
         });
+        lv_problems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
         lv_problems.setAdapter(adapter);
     }
 
@@ -185,4 +202,5 @@ public class Act_MainScreen extends AppCompatActivity {
         problemlist = new ArrayList<>();
         adapter = new ListAdapter(ctxt, problemlist);
     }
+
 }

@@ -3,6 +3,7 @@ package com.goldgrother.repeatmana.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,6 +37,11 @@ public class Act_Login extends AppCompatActivity {
     // UI
     private EditText et_account, et_password;
     private Button bt_login;
+    //
+    private SharedPreferences settings;
+    private static final String data = "DATA";
+    private static final String accountField = "ACCOUNT";
+    private static final String passwordField = "PASSWORD";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,7 @@ public class Act_Login extends AppCompatActivity {
         InitialSomething();
         InitialUI();
         InitialAction();
+        readData();
     }
 
     private void LoginTask() {
@@ -58,7 +65,6 @@ public class Act_Login extends AppCompatActivity {
         private ProgressDialog mDialog;
         private String account, password;
 
-        @Override
         protected void onPreExecute() {
             account = et_account.getText().toString();
             password = et_password.getText().toString();
@@ -83,9 +89,9 @@ public class Act_Login extends AppCompatActivity {
                     if (result == Code.Success) {
                         JSONArray array = jobj.getJSONArray("result");
                         JSONObject minfo = array.getJSONObject(0);
-                        user.setAccount(minfo.getString(""));
-                        user.setPassword(minfo.getString(""));
-
+                        user.setUserID(minfo.getString("UserID"));
+                        user.setUserPWD(minfo.getString("UserPWD"));
+                        user.setDormID(minfo.getString("DormID"));
                     }
                 }
 
@@ -101,6 +107,7 @@ public class Act_Login extends AppCompatActivity {
             Log.i("LoginTask", "Result:" + result);
             switch (result) {
                 case Code.Success:
+                    saveData();
                     Intent i = new Intent(ctxt, Act_MainScreen.class);
                     startActivity(i);
                     finish();
@@ -145,5 +152,23 @@ public class Act_Login extends AppCompatActivity {
     private void InitialSomething() {
         user = new UserAccount();
         con = new HttpConnection();
+    }
+
+    public void readData() {
+        settings = getSharedPreferences(data, 0);
+        et_account.setText(settings.getString(accountField, ""));
+        et_password.setText(settings.getString(passwordField, ""));
+        String acc = et_account.getText().toString();
+        String pwd = et_password.getText().toString();
+        if (!acc.isEmpty() && !pwd.isEmpty())
+            LoginTask();
+    }
+
+    public void saveData() {
+        settings = getSharedPreferences(data, 0);
+        settings.edit()
+                .putString(accountField, et_account.getText().toString())
+                .putString(passwordField, et_password.getText().toString())
+                .commit();
     }
 }

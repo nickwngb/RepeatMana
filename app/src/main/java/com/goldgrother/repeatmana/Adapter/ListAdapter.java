@@ -18,7 +18,8 @@ import java.util.List;
 public class ListAdapter extends MyBaseAdapter {
 
     private List<ProblemRecord> list;
-    public ListAdapter(Context context,List<ProblemRecord> list) {
+
+    public ListAdapter(Context context, List<ProblemRecord> list) {
         super(context);
         this.list = list;
     }
@@ -47,6 +48,7 @@ public class ListAdapter extends MyBaseAdapter {
             tag.CreateProblemDate = (TextView) v.findViewById(R.id.tv_item_createproblemdate);
             tag.ProblemDescription = (TextView) v.findViewById(R.id.tv_item_problemdescription);
             tag.Background = (LinearLayout) v.findViewById(R.id.layout_background);
+            v.setTag(tag);
         } else {
             tag = (ViewTag) v.getTag();
         }

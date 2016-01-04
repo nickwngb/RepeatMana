@@ -4,22 +4,31 @@ package com.goldgrother.repeatmana.Other;
  * Created by v on 2016/1/1.
  */
 public class UserAccount {
-    private String account;
-    private String password;
+    private String UserID;
+    private String UserPWD;
+    private String DormID;
 
-    public String getAccount() {
-        return account;
+    public String getUserID() {
+        return UserID;
     }
 
-    public void setAccount(String account) {
-        this.account = account;
+    public void setUserID(String userID) {
+        UserID = userID;
     }
 
-    public String getPassword() {
-        return password;
+    public String getUserPWD() {
+        return UserPWD;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUserPWD(String userPWD) {
+        UserPWD = userPWD;
+    }
+
+    public String getDormID() {
+        return DormID;
+    }
+
+    public void setDormID(String dormID) {
+        DormID = (dormID != null && !dormID.isEmpty() && !dormID.equals("null")) ? dormID : "5203";
     }
 }
