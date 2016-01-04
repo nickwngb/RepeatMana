@@ -81,7 +81,7 @@ public class Act_Login extends AppCompatActivity {
                 if (jobj != null) {
                     result = jobj.getInt("success");
                     if (result == Code.Success) {
-                        JSONArray array = jobj.getJSONArray("minfo");
+                        JSONArray array = jobj.getJSONArray("result");
                         JSONObject minfo = array.getJSONObject(0);
                         user.setAccount(minfo.getString(""));
                         user.setPassword(minfo.getString(""));
