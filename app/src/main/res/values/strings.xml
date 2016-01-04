@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">G.B.TAKE</string>
+    <!--Error Message-->
+    <string name="msg_err_network">No NetWork !</string>
 </resources>

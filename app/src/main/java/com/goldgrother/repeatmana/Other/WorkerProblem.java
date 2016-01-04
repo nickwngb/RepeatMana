@@ -1,17 +1,12 @@
 package com.goldgrother.repeatmana.Other;
 
-import java.io.Serializable;
-
 /**
- * Created by v on 2016/1/3.
+ * Created by v on 2016/1/4.
  */
-public class ProblemRecord implements Serializable {
+public class WorkerProblem {
     private int PRSNo;
     private String CustomerNo;
     private String FLaborNo;
-    private String WorkNo;
-
-
     private String ProblemDescription;
     private String CreateProblemDate;
     private String ResponseResult;
@@ -19,11 +14,6 @@ public class ProblemRecord implements Serializable {
     private String ResponseID;
     private String SatisfactionDegree;
     private String ProblemStatus;
-
-
-    public ProblemRecord() {
-
-    }
 
     public int getPRSNo() {
         return PRSNo;
@@ -47,14 +37,6 @@ public class ProblemRecord implements Serializable {
 
     public void setFLaborNo(String FLaborNo) {
         this.FLaborNo = FLaborNo;
-    }
-
-    public String getWorkNo() {
-        return WorkNo;
-    }
-
-    public void setWorkNo(String workNo) {
-        WorkNo = workNo;
     }
 
     public String getProblemDescription() {

@@ -15,11 +15,11 @@ import java.util.List;
 /**
  * Created by v on 2016/1/2.
  */
-public class ListAdapter extends MyBaseAdapter {
+public class MyListAdapter extends MyBaseAdapter {
 
     private List<ProblemRecord> list;
 
-    public ListAdapter(Context context, List<ProblemRecord> list) {
+    public MyListAdapter(Context context, List<ProblemRecord> list) {
         super(context);
         this.list = list;
     }
