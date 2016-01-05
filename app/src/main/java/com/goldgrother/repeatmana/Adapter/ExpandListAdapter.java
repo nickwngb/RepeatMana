@@ -7,11 +7,10 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
+import com.goldgrother.repeatmana.Other.ProblemRecord;
 import com.goldgrother.repeatmana.Other.Worker;
-import com.goldgrother.repeatmana.Other.WorkerProblem;
 import com.goldgrother.repeatmana.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,7 +30,7 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        ArrayList<WorkerProblem> chList = groups.get(groupPosition).getItems();
+        List<ProblemRecord> chList = groups.get(groupPosition).getItems();
         return chList.get(childPosition);
     }
 
@@ -44,7 +43,7 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition,
                              boolean isLastChild, View v, ViewGroup parent) {
 
-        WorkerProblem child = (WorkerProblem) getChild(groupPosition, childPosition);
+        ProblemRecord child = (ProblemRecord) getChild(groupPosition, childPosition);
         ChildTag tag = null;
         if (v == null) {
             tag = new ChildTag();
@@ -67,7 +66,7 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        ArrayList<WorkerProblem> chList = groups.get(groupPosition).getItems();
+        List<ProblemRecord> chList = groups.get(groupPosition).getItems();
         return chList.size();
     }
 

@@ -55,10 +55,7 @@ public class Act_MainScreen extends AppCompatActivity {
     // Other
     private List<ProblemRecord> problemlist;
     private List<Worker> list_workers;
-    // Status Code
-    private static final String Untreated = "0";
-    private static final String Processing = "1";
-    private static final String Completed = "2";
+
 
 
     @Override
@@ -121,7 +118,7 @@ public class Act_MainScreen extends AppCompatActivity {
                             fproblem.setResponseID(ajobj.getString("ResponseID"));
                             fproblem.setProblemStatus(ajobj.getString("ProblemStatus"));
                             fproblem.setSatisfactionDegree(ajobj.getString("SatisfactionDegree"));
-                            fproblem.setWorkNo(ajobj.getString(""));
+                            fproblem.setWorkNo(ajobj.getString("WorkerNo"));
                             problemlist.add(fproblem);
                         }
                     }
@@ -140,7 +137,7 @@ public class Act_MainScreen extends AppCompatActivity {
             switch (result) {
                 case Code.Success:
                 case Code.Empty:
-                    if (status.equals(Completed)) {
+                    if (status.equals(Code.Completed)) {
                         refreshExpandList();
                     } else {
                         refreshList();
@@ -199,8 +196,8 @@ public class Act_MainScreen extends AppCompatActivity {
 
     private String getCurrentDateStart(String status) {
         Calendar calendar = Calendar.getInstance();
-        if (status.equals(Completed)) {
-            calendar.add(Calendar.MONTH, -1);
+        if (status.equals(Code.Completed)) {
+            calendar.add(Calendar.MONTH, -12);
         }
         return new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()) + " 00:00:00";
     }
@@ -213,17 +210,17 @@ public class Act_MainScreen extends AppCompatActivity {
     private void InitialAction() {
         bt_untreated.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                LoadingProblem(Untreated);
+                LoadingProblem(Code.Untreated);
             }
         });
         bt_processing.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                LoadingProblem(Processing);
+                LoadingProblem(Code.Processing);
             }
         });
         bt_completed.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                LoadingProblem(Completed);
+                LoadingProblem(Code.Completed);
             }
         });
         // ListView setting
@@ -237,7 +234,7 @@ public class Act_MainScreen extends AppCompatActivity {
         elv_workers.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 //List<ProblemRecord> list = list_workers.get(groupPosition).getItems(); // this worker problems
-                Toast.makeText(ctxt, list_workers.get(groupPosition).getWorkerNo() + "\nPosition " + childPosition, Toast.LENGTH_SHORT).show();
+
                 return false;
             }
         });

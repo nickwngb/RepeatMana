@@ -3,4 +3,18 @@
     <color name="colorPrimary">#03A9F4</color>
     <color name="colorPrimaryDark">#01579B</color>
     <color name="colorAccent">#000000</color>
+
+    <!--  Basic Color -->
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="gray">#ADADAD</color>
+    <color name="green">#00FF00</color>
+    <color name="red">#FF0000</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="trans">#00FFFFFF</color>
+
+    <!-- Code Color -->
+    <color name="Untreated">#EA7500</color>
+    <color name="Processing">#CE0000</color>
+    <color name="Completed">#0072E3</color>
 </resources>
