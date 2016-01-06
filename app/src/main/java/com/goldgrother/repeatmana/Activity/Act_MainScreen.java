@@ -2,6 +2,7 @@ package com.goldgrother.repeatmana.Activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -45,6 +46,7 @@ public class Act_MainScreen extends AppCompatActivity {
     private Context ctxt = Act_MainScreen.this;
     private HttpConnection con;
     public static UserAccount user = Act_Login.user;
+    private final int ActProblem = 0;
     // UI
     private Button bt_untreated, bt_processing, bt_completed;
     private ListView lv_problems;
@@ -55,7 +57,7 @@ public class Act_MainScreen extends AppCompatActivity {
     // Other
     private List<ProblemRecord> problemlist;
     private List<Worker> list_workers;
-
+    private String LastClickStatus;
 
 
     @Override
@@ -210,31 +212,38 @@ public class Act_MainScreen extends AppCompatActivity {
     private void InitialAction() {
         bt_untreated.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                LastClickStatus = Code.Untreated;
                 LoadingProblem(Code.Untreated);
             }
         });
         bt_processing.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                LastClickStatus = Code.Processing;
                 LoadingProblem(Code.Processing);
             }
         });
         bt_completed.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                LastClickStatus = Code.Completed;
                 LoadingProblem(Code.Completed);
             }
         });
         // ListView setting
         lv_problems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                Intent it = new Intent(ctxt, Act_Problem.class);
+                it.putExtra("ProblemRecord", problemlist.get(position));
+                startActivityForResult(it, ActProblem);
             }
         });
         lv_problems.setAdapter(list_adapter);
         // ExpandableListView setting
         elv_workers.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                //List<ProblemRecord> list = list_workers.get(groupPosition).getItems(); // this worker problems
-
+                List<ProblemRecord> list = list_workers.get(groupPosition).getItems(); // this worker problems
+                Intent it = new Intent(ctxt, Act_Problem.class);
+                it.putExtra("ProblemRecord", list.get(childPosition));
+                startActivity(it);
                 return false;
             }
         });
@@ -257,4 +266,16 @@ public class Act_MainScreen extends AppCompatActivity {
         exlist_adapter = new ExpandListAdapter(ctxt, list_workers);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ActProblem) {
+            switch (resultCode) {
+                case RESULT_OK:
+                    LoadingProblem(LastClickStatus);
+                    break;
+            }
+        }
+
+    }
 }

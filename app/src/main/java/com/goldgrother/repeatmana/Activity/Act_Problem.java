@@ -115,13 +115,15 @@ public class Act_Problem extends Activity {
             pDialog.dismiss();
             switch (result) {
                 case Code.Success:
-                    Toast.makeText(ctxt, "Give Start Success", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctxt, "Repeat Success", Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK);
+                    finish();
                     break;
                 case Code.Fail:
-                    Toast.makeText(ctxt, "Give Start Fail", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctxt, "Repeat Success", Toast.LENGTH_SHORT).show();
                     break;
                 case Code.NoResponse:
-                    Toast.makeText(ctxt, "Connection Fail", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctxt, "Server no response", Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     Toast.makeText(ctxt, "Error : " + result, Toast.LENGTH_SHORT).show();
@@ -162,7 +164,9 @@ public class Act_Problem extends Activity {
         } catch (Exception ex) {
         }
         rb_score.setRating(rating);
-
+        if (pr.getProblemStatus().equals(Code.Completed)) {
+            rb_score.setVisibility(View.VISIBLE);
+        }
 
         bt_send.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
