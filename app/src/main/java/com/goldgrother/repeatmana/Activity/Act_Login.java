@@ -57,7 +57,7 @@ public class Act_Login extends AppCompatActivity {
         if (Uti.isNetWork(ctxt)) {
             new LoginTask().execute();
         } else {
-
+            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -69,7 +69,7 @@ public class Act_Login extends AppCompatActivity {
             account = et_account.getText().toString();
             password = et_password.getText().toString();
             mDialog = new ProgressDialog(ctxt);
-            mDialog.setMessage("Loading");
+            mDialog.setMessage("Loading...");
             mDialog.setIndeterminate(false);
             mDialog.setCancelable(false);
             mDialog.show();

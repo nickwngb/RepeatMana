@@ -84,7 +84,7 @@ public class Act_MainScreen extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             mDialog = new ProgressDialog(ctxt);
-            mDialog.setMessage("Loading");
+            mDialog.setMessage("Loading...");
             mDialog.setIndeterminate(false);
             mDialog.setCancelable(false);
             mDialog.show();

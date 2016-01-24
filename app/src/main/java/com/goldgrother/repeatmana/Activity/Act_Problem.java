@@ -59,7 +59,6 @@ public class Act_Problem extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_problem);
-
         getExtras();
         InitialSomething();
         InitialUI();
