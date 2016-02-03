@@ -45,7 +45,7 @@ public class Act_MainScreen extends AppCompatActivity {
 
     private Context ctxt = Act_MainScreen.this;
     private HttpConnection con;
-    public static UserAccount user = Act_Login.user;
+   private UserAccount user;
     private final int ActProblem = 0;
     // UI
     private Button bt_untreated, bt_processing, bt_completed;
@@ -88,6 +88,7 @@ public class Act_MainScreen extends AppCompatActivity {
             mDialog.setIndeterminate(false);
             mDialog.setCancelable(false);
             mDialog.show();
+
         }
 
         @Override
@@ -95,13 +96,17 @@ public class Act_MainScreen extends AppCompatActivity {
             Integer result = Code.NoResponse;
             status = params[0];
             problemlist.clear();
+            Log.d("LoadingProblem", getCurrentDateStart(status));
+            Log.d("LoadingProblem",getCurrentDateEnd());
+            Log.d("LoadingProblem",status);
+            //Log.d("LoadingProblem",user.getDormID());
             try {
                 // put "phone" post out, get json
                 List<NameValuePair> postFields = new ArrayList<>();
-                postFields.add(new BasicNameValuePair("startday", getCurrentDateStart(status)));
-                postFields.add(new BasicNameValuePair("endday", getCurrentDateEnd()));
+                postFields.add(new BasicNameValuePair("startDay", getCurrentDateStart(status)));
+                postFields.add(new BasicNameValuePair("endDay", getCurrentDateEnd()));
                 postFields.add(new BasicNameValuePair("status", status));
-                postFields.add(new BasicNameValuePair("dormid", user.getDormID()));
+                postFields.add(new BasicNameValuePair("dormId", "5203"));
                 JSONObject jobj = con.PostGetJson(URLs.url_loadingproblem, postFields);
                 if (jobj != null) {
                     result = jobj.getInt("success");
@@ -117,7 +122,7 @@ public class Act_MainScreen extends AppCompatActivity {
                             fproblem.setCreateProblemDate(ajobj.getString("CreateProblemDate"));
                             fproblem.setResponseResult(ajobj.getString("ResponseResult"));
                             fproblem.setResponseDate(ajobj.getString("ResponseDate"));
-                            fproblem.setResponseID(ajobj.getString("ResponseID"));
+                            fproblem.setResponseID(ajobj.getString("ResponseId"));
                             fproblem.setProblemStatus(ajobj.getString("ProblemStatus"));
                             fproblem.setSatisfactionDegree(ajobj.getString("SatisfactionDegree"));
                             fproblem.setWorkNo(ajobj.getString("WorkerNo"));
@@ -201,11 +206,11 @@ public class Act_MainScreen extends AppCompatActivity {
         if (status.equals(Code.Completed)) {
             calendar.add(Calendar.MONTH, -12);
         }
-        return new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()) + " 00:00:00";
+        return new SimpleDateFormat("yyyy/MM/dd").format(calendar.getTime()) + " 00:00:00";
     }
 
     private String getCurrentDateEnd() {
-        SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd");
         return sdFormat.format(new java.util.Date()) + " 23:59:59";
     }
 
@@ -259,6 +264,7 @@ public class Act_MainScreen extends AppCompatActivity {
     }
 
     private void InitialSomething() {
+        user = UserAccount.getUserAccount();
         con = new HttpConnection();
         problemlist = new ArrayList<>();
         list_workers = new ArrayList<>();

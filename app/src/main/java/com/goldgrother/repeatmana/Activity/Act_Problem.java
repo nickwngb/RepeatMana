@@ -42,7 +42,7 @@ import java.util.List;
 public class Act_Problem extends Activity {
     //
     private Context ctxt = Act_Problem.this;
-    private UserAccount user = Act_MainScreen.user;
+    private UserAccount user;
     private HttpConnection conn;
     private Resources res;
     private ProblemRecord pr;
@@ -75,6 +75,7 @@ public class Act_Problem extends Activity {
 
     class UpdateStartTask extends AsyncTask<String, Integer, Integer> {
         private ProgressDialog pDialog;
+        private String PRSNo, ResponseResult, ResponseDate, ResponseId, ProblemStatus;
 
         @Override
         protected void onPreExecute() {
@@ -83,6 +84,14 @@ public class Act_Problem extends Activity {
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
             pDialog.show();
+            PRSNo = String.valueOf(pr.getPRSNo());
+            ResponseResult = et_manacontent.getText().toString();
+            ResponseDate = getCurrentDateTime();
+            ResponseId = user.getUserID();
+            ProblemStatus = "2";
+            Log.d("UpdateStartTask", PRSNo);
+            Log.d("UpdateStartTask", ResponseResult);
+            Log.d("UpdateStartTask", ResponseDate + " " + ResponseId + " " + ProblemStatus);
         }
 
         @Override
@@ -91,11 +100,11 @@ public class Act_Problem extends Activity {
             try {
                 // put "phone" post out, get json
                 List<NameValuePair> postFields = new ArrayList<>();
-                postFields.add(new BasicNameValuePair("PRSNo", datas[0]));
-                postFields.add(new BasicNameValuePair("ResponseResult", datas[1]));
-                postFields.add(new BasicNameValuePair("ResponseDate", datas[2]));
-                postFields.add(new BasicNameValuePair("ResponseID", datas[3]));
-                postFields.add(new BasicNameValuePair("ProblemStatus", datas[4]));
+                postFields.add(new BasicNameValuePair("PRSNo", PRSNo));
+                postFields.add(new BasicNameValuePair("ResponseResult", ResponseResult));
+                postFields.add(new BasicNameValuePair("ResponseDate", ResponseDate));
+                postFields.add(new BasicNameValuePair("ResponseId", ResponseId));
+                postFields.add(new BasicNameValuePair("ProblemStatus", ProblemStatus));
 
 
                 JSONObject jobj = conn.PostGetJson(URLs.url_repeatproblem, postFields);
@@ -131,6 +140,28 @@ public class Act_Problem extends Activity {
         }
     }
 
+    private boolean isVaild() {
+        int PRSNo = pr.getPRSNo();
+        String ResponseResult = et_manacontent.getText().toString();
+        String ResponseDate = getCurrentDateTime();
+        String ResponseID = user.getUserID();
+        String ProblemStatus = "2";
+        if (PRSNo <= 0) {
+            return false;
+        }
+        if (ResponseResult.isEmpty()) {
+            Toast.makeText(ctxt, "Empty", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (ResponseID.isEmpty()) {
+            Toast.makeText(ctxt, "Id error", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
+
+    }
+
     private String getCurrentDateTime() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         java.util.Date date = new java.util.Date();
@@ -138,6 +169,7 @@ public class Act_Problem extends Activity {
     }
 
     private void InitialSomething() {
+        user = UserAccount.getUserAccount();
         res = getResources();
         conn = new HttpConnection();
     }
@@ -169,12 +201,9 @@ public class Act_Problem extends Activity {
 
         bt_send.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String PRSNo = String.valueOf(pr.getPRSNo());
-                String ResponseResult = et_manacontent.getText().toString();
-                String ResponseDate = getCurrentDateTime();
-                String ResponseID = user.getUserID();
-                String ProblemStatus = "2";
-                UpdateStartTask(PRSNo, ResponseResult, ResponseDate, ResponseID, ProblemStatus);
+                if (isVaild()) {
+                    UpdateStartTask();
+                }
             }
         });
     }

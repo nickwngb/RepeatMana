@@ -33,7 +33,7 @@ public class Act_Login extends AppCompatActivity {
 
     private Context ctxt = Act_Login.this;
     private HttpConnection con;
-    public static UserAccount user;
+    private UserAccount user;
     // UI
     private EditText et_account, et_password;
     private Button bt_login;
@@ -89,8 +89,7 @@ public class Act_Login extends AppCompatActivity {
                     if (result == Code.Success) {
                         JSONArray array = jobj.getJSONArray("result");
                         JSONObject minfo = array.getJSONObject(0);
-                        user.setUserID(minfo.getString("UserID"));
-                        user.setUserPWD(minfo.getString("UserPWD"));
+                        user.setUserID(account);
                         user.setDormID(minfo.getString("DormID"));
                     }
                 }
@@ -150,7 +149,7 @@ public class Act_Login extends AppCompatActivity {
     }
 
     private void InitialSomething() {
-        user = new UserAccount();
+        user = UserAccount.getUserAccount();
         con = new HttpConnection();
     }
 
