@@ -101,10 +101,10 @@ public class Act_Problem extends Activity {
                 // put "phone" post out, get json
                 List<NameValuePair> postFields = new ArrayList<>();
                 postFields.add(new BasicNameValuePair("PRSNo", PRSNo));
-                postFields.add(new BasicNameValuePair("ResponseResult", ResponseResult));
-                postFields.add(new BasicNameValuePair("ResponseDate", ResponseDate));
-                postFields.add(new BasicNameValuePair("ResponseId", ResponseId));
-                postFields.add(new BasicNameValuePair("ProblemStatus", ProblemStatus));
+                postFields.add(new BasicNameValuePair("responseResult", ResponseResult));
+                postFields.add(new BasicNameValuePair("responseDate", ResponseDate));
+                postFields.add(new BasicNameValuePair("responseId", ResponseId));
+                postFields.add(new BasicNameValuePair("problemStatus", ProblemStatus));
 
 
                 JSONObject jobj = conn.PostGetJson(URLs.url_repeatproblem, postFields);

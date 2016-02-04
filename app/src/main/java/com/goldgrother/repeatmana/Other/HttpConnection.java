@@ -31,8 +31,8 @@ public class HttpConnection {
             url = new URL(requestURL);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(15000);
-            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(5000);
+            conn.setConnectTimeout(5000);
             conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);
@@ -47,7 +47,7 @@ public class HttpConnection {
             writer.close();
             os.close();
             int responseCode = conn.getResponseCode();
-            Log.i("ResponseCode", "! " + responseCode);
+            Log.i("ResponseCode", responseCode+" !");
             if (responseCode == HttpsURLConnection.HTTP_OK) {
                 String line;
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));

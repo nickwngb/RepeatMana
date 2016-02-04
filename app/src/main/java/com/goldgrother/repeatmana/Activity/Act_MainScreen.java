@@ -45,7 +45,7 @@ public class Act_MainScreen extends AppCompatActivity {
 
     private Context ctxt = Act_MainScreen.this;
     private HttpConnection con;
-   private UserAccount user;
+    private UserAccount user;
     private final int ActProblem = 0;
     // UI
     private Button bt_untreated, bt_processing, bt_completed;
@@ -97,8 +97,8 @@ public class Act_MainScreen extends AppCompatActivity {
             status = params[0];
             problemlist.clear();
             Log.d("LoadingProblem", getCurrentDateStart(status));
-            Log.d("LoadingProblem",getCurrentDateEnd());
-            Log.d("LoadingProblem",status);
+            Log.d("LoadingProblem", getCurrentDateEnd());
+            Log.d("LoadingProblem", status);
             //Log.d("LoadingProblem",user.getDormID());
             try {
                 // put "phone" post out, get json
@@ -106,7 +106,7 @@ public class Act_MainScreen extends AppCompatActivity {
                 postFields.add(new BasicNameValuePair("startDay", getCurrentDateStart(status)));
                 postFields.add(new BasicNameValuePair("endDay", getCurrentDateEnd()));
                 postFields.add(new BasicNameValuePair("status", status));
-                postFields.add(new BasicNameValuePair("dormId", "5203"));
+                postFields.add(new BasicNameValuePair("dormId", user.getDormID()));
                 JSONObject jobj = con.PostGetJson(URLs.url_loadingproblem, postFields);
                 if (jobj != null) {
                     result = jobj.getInt("success");
@@ -282,6 +282,17 @@ public class Act_MainScreen extends AppCompatActivity {
                     break;
             }
         }
+    }
 
+    private long lastpresstime = 0;
+
+    @Override
+    public void onBackPressed() {
+        if (System.currentTimeMillis() - lastpresstime < 2000) {
+            super.onBackPressed();
+        } else {
+            lastpresstime = System.currentTimeMillis();
+            Toast.makeText(ctxt, "Press again to leave", Toast.LENGTH_SHORT).show();
+        }
     }
 }
