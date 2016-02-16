@@ -12,8 +12,8 @@
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:src="@drawable/banner" />
+            android:layout_height="65dp"
+            android:src="@drawable/title" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,7 +25,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/button_untreated"
+                android:background="@drawable/bt_untreated"
                 android:textAllCaps="false" />
 
             <Button
@@ -33,7 +33,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/button_processing"
+                android:background="@drawable/bt_proccessing"
                 android:textAllCaps="false" />
 
             <Button
@@ -41,7 +41,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/button_completed"
+                android:background="@drawable/bt_complete"
                 android:textAllCaps="false" />
         </LinearLayout>
 

@@ -153,7 +153,6 @@ public class Act_MainScreen extends AppCompatActivity {
                 case Code.NoResponse:
                     Toast.makeText(ctxt, "Server no response", Toast.LENGTH_SHORT).show();
                     break;
-
                 default:
                     Toast.makeText(ctxt, "Error : " + result, Toast.LENGTH_SHORT).show();
             }

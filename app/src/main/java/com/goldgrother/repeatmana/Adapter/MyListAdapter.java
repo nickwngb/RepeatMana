@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -11,6 +12,9 @@ import com.goldgrother.repeatmana.Other.ProblemRecord;
 import com.goldgrother.repeatmana.R;
 
 import java.util.List;
+import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by v on 2016/1/2.
@@ -30,7 +34,7 @@ public class MyListAdapter extends MyBaseAdapter {
     }
 
     @Override
-    public ProblemRecord getItem(int position) {
+    public Object getItem(int position) {
         return list.get(position);
     }
 
@@ -41,28 +45,33 @@ public class MyListAdapter extends MyBaseAdapter {
 
     @Override
     public View getView(int position, View v, ViewGroup parent) {
-        ViewTag tag = null;
+        ViewTag tag;
         if (v == null) {
-            tag = new ViewTag();
             v = getInflater().inflate(R.layout.item_list, null);
-            tag.CreateProblemDate = (TextView) v.findViewById(R.id.tv_item_createproblemdate);
-            tag.ProblemDescription = (TextView) v.findViewById(R.id.tv_item_problemdescription);
-            tag.Background = (LinearLayout) v.findViewById(R.id.layout_background);
+            tag = new ViewTag();
+            tag.photo = (CircleImageView) v.findViewById(R.id.img_item_photo);
+            tag.name = (TextView) v.findViewById(R.id.tv_item_name);
+            tag.content = (TextView) v.findViewById(R.id.tv_item_responsecontent);
+            tag.datetime = (TextView) v.findViewById(R.id.tv_item_responsedatetime);
+            tag.status = (ImageView) v.findViewById(R.id.img_item_status);
             v.setTag(tag);
         } else {
             tag = (ViewTag) v.getTag();
         }
+        ProblemRecord item = (ProblemRecord) getItem(position);
         // setText
-        tag.CreateProblemDate.setText(getItem(position).getCreateProblemDate());
-        tag.ProblemDescription.setText(getItem(position).getProblemDescription());
-        // setBackground
-        //tag.Background.setBackgroundResource(getResources().getDrawable(R.drawable.,null));
+        tag.name.setText(item.getResponseID());
+        tag.content.setText(item.getResponseContent());
+        tag.datetime.setText(item.getResponseDate());
+        //item.getProblemStatus();
         return v;
     }
 
     class ViewTag {
-        TextView CreateProblemDate;
-        TextView ProblemDescription;
-        LinearLayout Background;
+        public CircleImageView photo;
+        public TextView name;
+        public TextView content;
+        public TextView datetime;
+        public ImageView status;
     }
 }

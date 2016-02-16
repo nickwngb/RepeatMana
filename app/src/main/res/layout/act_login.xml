@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
 
 
     <LinearLayout
@@ -12,11 +13,19 @@
         android:layout_marginTop="60dp"
         android:orientation="vertical">
 
+        <ImageView
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_gravity="center"
+            android:src="@drawable/img_login" />
+
         <EditText
             android:id="@+id/et_login_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Account" />
+            android:hint="Account"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
 
         <EditText
             android:id="@+id/et_login_password"
@@ -24,15 +33,19 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:hint="Password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
 
         <Button
             android:id="@+id/bt_login_login"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="10dp"
+            android:background="@color/button_color"
             android:text="Login"
+            android:textColor="@color/white"
             android:textAllCaps="false"
-            android:textSize="32sp" />
+            android:textSize="20sp" />
     </LinearLayout>
 </RelativeLayout>

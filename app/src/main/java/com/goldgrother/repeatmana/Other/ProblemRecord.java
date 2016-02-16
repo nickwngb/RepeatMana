@@ -3,26 +3,53 @@ package com.goldgrother.repeatmana.Other;
 import java.io.Serializable;
 
 /**
- * Created by v on 2016/1/3.
+ * Created by user on 2015/12/10.
  */
 public class ProblemRecord implements Serializable {
     private int PRSNo;
     private String CustomerNo;
     private String FLaborNo;
-    private String WorkNo;
-
-
-    private String ProblemDescription;
-    private String CreateProblemDate;
-    private String ResponseResult;
-    private String ResponseDate;
-    private String ResponseID;
     private String SatisfactionDegree;
     private String ProblemStatus;
-
-
+    // Last ProblemResponse
+    private String ResponseContent;
+    private String ResponseDate;
+    private String ResponseID;
+    private String ResponseRole;
     public ProblemRecord() {
 
+    }
+
+    public String getResponseContent() {
+        return ResponseContent;
+    }
+
+    public void setResponseContent(String responseContent) {
+        ResponseContent = responseContent;
+    }
+
+    public String getResponseDate() {
+        return ResponseDate;
+    }
+
+    public void setResponseDate(String responseDate) {
+        ResponseDate = responseDate;
+    }
+
+    public String getResponseID() {
+        return ResponseID;
+    }
+
+    public void setResponseID(String responseID) {
+        ResponseID = responseID;
+    }
+
+    public String getResponseRole() {
+        return ResponseRole;
+    }
+
+    public void setResponseRole(String responseRole) {
+        ResponseRole = responseRole;
     }
 
     public int getPRSNo() {
@@ -47,66 +74,6 @@ public class ProblemRecord implements Serializable {
 
     public void setFLaborNo(String FLaborNo) {
         this.FLaborNo = FLaborNo;
-    }
-
-    public String getWorkNo() {
-        return WorkNo;
-    }
-
-    public void setWorkNo(String workNo) {
-        WorkNo = workNo;
-    }
-
-    public String getProblemDescription() {
-        return ProblemDescription;
-    }
-
-    public void setProblemDescription(String problemDescription) {
-        ProblemDescription = problemDescription;
-    }
-
-    public String getCreateProblemDate() {
-        return CreateProblemDate;
-    }
-
-    public void setCreateProblemDate(String createProblemDate) {
-        CreateProblemDate = createProblemDate;
-    }
-
-    public String getResponseResult() {
-        return ResponseResult;
-    }
-
-    public void setResponseResult(String responseResult) {
-        if (responseResult.length() == 4) {
-            if (responseResult.equals("null") || responseResult.equals("NULL"))
-                responseResult = "";
-        }
-        ResponseResult = responseResult;
-    }
-
-    public String getResponseDate() {
-        return ResponseDate;
-    }
-
-    public void setResponseDate(String responseDate) {
-        if (responseDate.length() == 4) {
-            if (responseDate.equals("null") || responseDate.equals("NULL"))
-                responseDate = "";
-        }
-        ResponseDate = responseDate;
-    }
-
-    public String getResponseID() {
-        return ResponseID;
-    }
-
-    public void setResponseID(String responseID) {
-        if (responseID.length() == 4) {
-            if (responseID.equals("null") || responseID.equals("NULL"))
-                responseID = "";
-        }
-        ResponseID = responseID;
     }
 
     public String getSatisfactionDegree() {

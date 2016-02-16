@@ -136,8 +136,10 @@ public class Act_Login extends AppCompatActivity {
     private void InitialAction() {
         bt_login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (isVaild())
-                    LoginTask();
+//                if (isVaild())
+//                    LoginTask();
+                Intent i = new Intent(ctxt, Act_MainScreen.class);
+                startActivity(i);
             }
         });
     }
@@ -159,8 +161,8 @@ public class Act_Login extends AppCompatActivity {
         et_password.setText(settings.getString(passwordField, ""));
         String acc = et_account.getText().toString();
         String pwd = et_password.getText().toString();
-        if (!acc.isEmpty() && !pwd.isEmpty())
-            LoginTask();
+//        if (!acc.isEmpty() && !pwd.isEmpty())
+//            LoginTask();
     }
 
     public void saveData() {
