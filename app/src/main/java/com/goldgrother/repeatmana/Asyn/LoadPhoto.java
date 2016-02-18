@@ -72,12 +72,12 @@ public class LoadPhoto extends AsyncTask<String, Integer, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         super.onPostExecute(result);
-
         if (rf_circleImg != null) {
             ImageView imageView = rf_circleImg.get();
             if (imageView != null) {
                 if (bitmap != null) {
                     imageView.setImageBitmap(bitmap);
+                    imageView.setTag(1);
                     mListener.finish();
                 }
             }

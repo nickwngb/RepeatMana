@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class Login extends AsyncTask<String, Integer, Integer> {
     public interface OnLoginListener {
-        void finish(Integer result,String UserPhoto,String DormID);
+        void finish(Integer result, String account, String password, String UserPhoto, String DormID);
     }
 
     private final OnLoginListener mListener;
@@ -66,6 +66,6 @@ public class Login extends AsyncTask<String, Integer, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         super.onPostExecute(result);
-        mListener.finish(result,UserPhoto,DormID);
+        mListener.finish(result, account, password, UserPhoto, DormID);
     }
 }

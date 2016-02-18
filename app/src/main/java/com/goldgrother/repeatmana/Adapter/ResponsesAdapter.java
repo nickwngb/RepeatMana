@@ -3,16 +3,16 @@ package com.goldgrother.repeatmana.Adapter;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import com.goldgrother.repeatmana.Asyn.LoadPhoto;
 import com.goldgrother.repeatmana.Other.Code;
+import com.goldgrother.repeatmana.Other.HttpConnection;
 import com.goldgrother.repeatmana.Other.ProblemResponse;
+import com.goldgrother.repeatmana.Other.Uti;
 import com.goldgrother.repeatmana.R;
 
 import java.util.List;
@@ -24,9 +24,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class ResponsesAdapter extends MyBaseAdapter {
     private List<ProblemResponse> list;
+    private String FLaborNo;
+    private String CustomerNo;
 
-    public ResponsesAdapter(Context context, List<ProblemResponse> list) {
+    public ResponsesAdapter(Context context, String FLaborNo, String CustomerNo, List<ProblemResponse> list) {
         super(context);
+        this.FLaborNo = FLaborNo;
+        this.CustomerNo = CustomerNo;
         this.list = list;
     }
 
@@ -45,7 +49,7 @@ public class ResponsesAdapter extends MyBaseAdapter {
         ProblemResponse item = (ProblemResponse) getItem(position);
         ViewHolder tag;
         if (v == null) {
-            v = getInflater().inflate(R.layout.block_flabor, null);
+            v = getInflater().inflate(R.layout.block_response, null);
             tag = new ViewHolder();
             tag.background = (ImageView) v.findViewById(R.id.bg_item_who);
             //
@@ -66,17 +70,19 @@ public class ResponsesAdapter extends MyBaseAdapter {
         }
         if (item.getResponseRole().equals(Code.Flabor)) {
             tag.f_content.setText(item.getResponseContent());
-            //tag.f_photo
+            //if (tag.f_photo.getTag() != null)
+            //LoadPhoto(tag.f_photo,item.getResponseRole(),FLaborNo,CustomerNo);
             tag.f_name.setText(item.getResponseID());
             tag.f_datetime.setText(item.getResponseDate());
         } else {
             tag.m_content.setText(item.getResponseContent());
-            //tag.m_photo
+//            if (tag.m_photo.getTag() != null)
+//                LoadPhoto(tag.m_photo, item.getResponseRole(), item.getResponseID());
             tag.m_name.setText(item.getResponseID());
             tag.m_datetime.setText(item.getResponseDate());
         }
 
-        // show
+        // background
         if (item.getResponseRole().equals(Code.Flabor)) {
             final int sdk = android.os.Build.VERSION.SDK_INT;
             if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
@@ -118,5 +124,16 @@ public class ResponsesAdapter extends MyBaseAdapter {
         public CircleImageView m_photo;
         public TextView m_name;
         public TextView m_datetime;
+    }
+
+    private void LoadPhoto(CircleImageView circleImageView, String... datas) {
+        if (Uti.isNetWork(getContext())) {
+            LoadPhoto task = new LoadPhoto(circleImageView, new HttpConnection(), new LoadPhoto.OnLoadPhotoListener() {
+                public void finish() {
+
+                }
+            });
+            task.execute(datas);
+        }
     }
 }

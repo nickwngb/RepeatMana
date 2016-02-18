@@ -1,24 +1,19 @@
 package com.goldgrother.repeatmana.Adapter;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.goldgrother.repeatmana.Asyn.LoadPhoto;
 import com.goldgrother.repeatmana.Other.Code;
-import com.goldgrother.repeatmana.Other.FreeDialog;
 import com.goldgrother.repeatmana.Other.HttpConnection;
 import com.goldgrother.repeatmana.Other.ProblemRecord;
 import com.goldgrother.repeatmana.Other.Uti;
 import com.goldgrother.repeatmana.R;
 
 import java.util.List;
-import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -53,7 +48,7 @@ public class MyListAdapter extends MyBaseAdapter {
     public View getView(int position, View v, ViewGroup parent) {
         ViewTag tag;
         if (v == null) {
-            v = getInflater().inflate(R.layout.item_list, null);
+            v = getInflater().inflate(R.layout.item_list_problem, null);
             tag = new ViewTag();
             tag.photo = (CircleImageView) v.findViewById(R.id.img_item_photo);
             tag.name = (TextView) v.findViewById(R.id.tv_item_name);
@@ -71,11 +66,12 @@ public class MyListAdapter extends MyBaseAdapter {
         tag.datetime.setText(item.getResponseDate());
         //item.getProblemStatus();
 
-        if (item.getResponseRole().equals(Code.Flabor)) {
-            LoadPhoto(tag.photo, item.getResponseRole(), item.getFLaborNo(), item.getCustomerNo());
-        } else {
-            LoadPhoto(tag.photo, item.getResponseRole(), item.getResponseID());
-        }
+        // photo
+//        if (item.getResponseRole().equals(Code.Flabor)) {
+//            LoadPhoto(tag.photo, item.getResponseRole(), item.getFLaborNo(), item.getCustomerNo());
+//        } else {
+//            LoadPhoto(tag.photo, item.getResponseRole(), item.getResponseID());
+//        }
         return v;
     }
 

@@ -54,8 +54,8 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
         } else {
             tag = (ChildTag) v.getTag();
         }
-        tag.date.setText(child.getCreateProblemDate());
-        tag.content.setText(child.getProblemDescription());
+        //tag.date.setText(child.getCreateProblemDate());
+        //tag.content.setText(child.getProblemDescription());
         return v;
     }
 

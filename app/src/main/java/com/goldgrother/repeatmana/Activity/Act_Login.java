@@ -60,11 +60,13 @@ public class Act_Login extends AppCompatActivity {
         if (Uti.isNetWork(ctxt)) {
             final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt, "Loading...");
             Login task = new Login(con, new Login.OnLoginListener() {
-                public void finish(Integer result, String UserPhoto, String DormID) {
+                public void finish(Integer result,String account,String password, String UserPhoto, String DormID) {
                     pd.dismiss();
                     Log.i("LoginTask", "Result : " + result);
                     switch (result) {
                         case Code.Success:
+                            user.setUserID(account);
+                            user.setUserPWD(password);
                             user.setDormID(DormID);
                             user.setPhoto(UserPhoto);
                             saveData();
@@ -118,8 +120,9 @@ public class Act_Login extends AppCompatActivity {
         et_password.setText(settings.getString(passwordField, ""));
         String acc = et_account.getText().toString();
         String pwd = et_password.getText().toString();
-//        if (!acc.isEmpty() && !pwd.isEmpty())
+//        if (Vaild.login(ctxt, acc, pwd)) {
 //            LoginTask();
+//        }
     }
 
     public void saveData() {

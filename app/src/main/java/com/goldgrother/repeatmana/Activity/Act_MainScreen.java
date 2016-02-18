@@ -3,7 +3,6 @@ package com.goldgrother.repeatmana.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,22 +15,17 @@ import android.widget.Toast;
 
 import com.goldgrother.repeatmana.Adapter.ExpandListAdapter;
 import com.goldgrother.repeatmana.Adapter.MyListAdapter;
+import com.goldgrother.repeatmana.Asyn.LoadAllLastestResponse;
 import com.goldgrother.repeatmana.Asyn.LoadProblem;
 import com.goldgrother.repeatmana.Other.Code;
 import com.goldgrother.repeatmana.Other.FreeDialog;
 import com.goldgrother.repeatmana.Other.HttpConnection;
 import com.goldgrother.repeatmana.Other.ProblemRecord;
-import com.goldgrother.repeatmana.Other.URLs;
+import com.goldgrother.repeatmana.Other.ProblemResponse;
 import com.goldgrother.repeatmana.Other.UserAccount;
 import com.goldgrother.repeatmana.Other.Uti;
 import com.goldgrother.repeatmana.Other.Worker;
 import com.goldgrother.repeatmana.R;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,6 +52,7 @@ public class Act_MainScreen extends AppCompatActivity {
     private ExpandListAdapter exlist_adapter;
     // Other
     private List<ProblemRecord> problemlist;
+    private List<ProblemResponse> responselist;
     private List<Worker> list_workers;
     private String LastClickStatus;
 
@@ -80,6 +75,8 @@ public class Act_MainScreen extends AppCompatActivity {
                     Log.i("LoadingProblem", "Result:" + result);
                     switch (result) {
                         case Code.Success:
+                            LoadAllLastestResponse(status);
+                            break;
                         case Code.Empty:
                             if (status.equals(Code.Completed)) {
                                 refreshExpandList();
@@ -98,6 +95,54 @@ public class Act_MainScreen extends AppCompatActivity {
             task.execute(getCurrentDateStart(status), getCurrentDateEnd(), status, user.getDormID());
         } else {
             Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void LoadAllLastestResponse(final String status) {
+        if (Uti.isNetWork(ctxt)) {
+            final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt, "Loading...");
+            LoadAllLastestResponse task = new LoadAllLastestResponse(con, new LoadAllLastestResponse.OnLoadAllResponseListener() {
+                public void finish(Integer result, List<ProblemResponse> list) {
+                    pd.dismiss();
+                    switch (result) {
+                        case Code.Success:
+                        case Code.Empty:
+                            responselist = list;
+                            PairWithRecord();
+                            if (status.equals(Code.Completed)) {
+                                refreshExpandList();
+                            } else {
+                                refreshList();
+                            }
+                            break;
+                        case Code.NoResponse:
+                            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_noresponse), Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                }
+            });
+            List<Integer> PRSNos = new ArrayList<>();
+            for (ProblemRecord pr : problemlist) {
+                PRSNos.add(pr.getPRSNo());
+            }
+            task.execute(PRSNos);
+        } else {
+            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void PairWithRecord() {
+        for (ProblemResponse rs : responselist) {
+            int prsno = rs.getPRSNo();
+            for (ProblemRecord pr : problemlist) {
+                if (prsno == pr.getPRSNo()) {
+                    pr.setResponseContent(rs.getResponseContent());
+                    pr.setResponseDate(rs.getResponseDate());
+                    pr.setResponseID(rs.getResponseID());
+                    pr.setResponseRole(rs.getResponseRole());
+                    break;
+                }
+            }
         }
     }
 
@@ -178,8 +223,10 @@ public class Act_MainScreen extends AppCompatActivity {
         lv_problems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ProblemRecord pr = problemlist.get(position);
-                Intent it = new Intent(ctxt, Act_Problem.class);
+                Intent it = new Intent(ctxt, Act_Responses.class);
                 it.putExtra("PRSNo", pr.getPRSNo());
+                it.putExtra("FLaborNo", pr.getFLaborNo());
+                it.putExtra("CustomerNo", pr.getCustomerNo());
                 startActivityForResult(it, ActProblem);
             }
         });
@@ -189,8 +236,10 @@ public class Act_MainScreen extends AppCompatActivity {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 List<ProblemRecord> list = list_workers.get(groupPosition).getItems(); // this worker problems
                 ProblemRecord pr = list.get(childPosition);
-                Intent it = new Intent(ctxt, Act_Problem.class);
+                Intent it = new Intent(ctxt, Act_Responses.class);
                 it.putExtra("PRSNo", pr.getPRSNo());
+                it.putExtra("FLaborNo", pr.getFLaborNo());
+                it.putExtra("CustomerNo", pr.getCustomerNo());
                 startActivity(it);
                 return false;
             }
@@ -210,6 +259,7 @@ public class Act_MainScreen extends AppCompatActivity {
         user = UserAccount.getUserAccount();
         con = new HttpConnection();
         problemlist = new ArrayList<>();
+        responselist = new ArrayList<>();
         list_workers = new ArrayList<>();
         list_adapter = new MyListAdapter(ctxt, problemlist);
         exlist_adapter = new ExpandListAdapter(ctxt, list_workers);
