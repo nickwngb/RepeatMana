@@ -37,7 +37,9 @@ public abstract class MyBaseAdapter extends BaseAdapter {
 
     public abstract Object getItem(int position);
 
-    public abstract long getItemId(int position);
+    public long getItemId(int position) {
+        return 0;
+    }
 
     public abstract View getView(int position, View v, ViewGroup parent);
 }

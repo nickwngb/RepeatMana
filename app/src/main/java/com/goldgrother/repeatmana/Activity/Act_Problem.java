@@ -16,13 +16,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.goldgrother.repeatmana.Adapter.ResponsesAdapter;
 import com.goldgrother.repeatmana.Other.Code;
 import com.goldgrother.repeatmana.Other.HttpConnection;
 import com.goldgrother.repeatmana.Other.ProblemRecord;
+import com.goldgrother.repeatmana.Other.ProblemResponse;
 import com.goldgrother.repeatmana.Other.URLs;
 import com.goldgrother.repeatmana.Other.UserAccount;
 import com.goldgrother.repeatmana.Other.Uti;
@@ -47,22 +50,20 @@ public class Act_Problem extends Activity {
     private Resources res;
     private ProblemRecord pr;
     // UI
-    private TextView txt_problem_createdate, txt_customercontent, txt_problem_repeatedate;
-    private EditText et_manacontent;
-    private LinearLayout ll_givestart;
-    private Button bt_send;
-    private RatingBar rb_score;
+    private ListView lv_responses;
+    // adapter
+    private ResponsesAdapter adapter;
     // other
-
+    private List<ProblemResponse> responses;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_problem);
-        getExtras();
         InitialSomething();
         InitialUI();
         InitialAction();
+        getExtras();
     }
 
     private void UpdateStartTask(String... datas) {
@@ -172,44 +173,20 @@ public class Act_Problem extends Activity {
         user = UserAccount.getUserAccount();
         res = getResources();
         conn = new HttpConnection();
+        responses = new ArrayList<>();
+        adapter = new ResponsesAdapter(ctxt, responses);
     }
 
     private void InitialUI() {
-        ll_givestart = (LinearLayout) findViewById(R.id.ll_givestart);
-        bt_send = (Button) findViewById(R.id.bt_send);
-        rb_score = (RatingBar) findViewById(R.id.rb_score);
-        txt_problem_createdate = (TextView) findViewById(R.id.txt_problem_createdate);
-        txt_customercontent = (TextView) findViewById(R.id.txt_customercontent);
-        txt_problem_repeatedate = (TextView) findViewById(R.id.txt_problem_repeatedate);
-        et_manacontent = (EditText) findViewById(R.id.et_problem_manacontent);
+        lv_responses = (ListView) findViewById(R.id.lv_responses);
     }
 
     private void InitialAction() {
-        txt_problem_createdate.setText(pr.getCreateProblemDate());
-        txt_customercontent.setText(pr.getProblemDescription());
-        txt_problem_repeatedate.setText(pr.getResponseDate());
-        et_manacontent.setText(pr.getResponseResult());
-        float rating = 5f;
-        try {
-            rating = Float.valueOf(pr.getSatisfactionDegree());
-        } catch (Exception ex) {
-        }
-        rb_score.setRating(rating);
-        if (pr.getProblemStatus().equals(Code.Completed)) {
-            rb_score.setVisibility(View.VISIBLE);
-        }
 
-        bt_send.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (isVaild()) {
-                    UpdateStartTask();
-                }
-            }
-        });
+        lv_responses.setAdapter(adapter);
     }
 
     private void getExtras() {
-        Bundle b = getIntent().getExtras();
-        pr = (ProblemRecord) b.getSerializable("ProblemRecord");
+        int PRSNo = getIntent().getIntExtra("PRSNo", 0);
     }
 }

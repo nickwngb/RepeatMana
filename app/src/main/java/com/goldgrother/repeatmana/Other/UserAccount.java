@@ -8,6 +8,8 @@ public class UserAccount {
     private String UserID;
     private String UserPWD;
     private String DormID;
+    private String Photo;
+
 
     private UserAccount() {
     }
@@ -38,5 +40,13 @@ public class UserAccount {
 
     public void setDormID(String dormID) {
         DormID = (dormID != null && !dormID.isEmpty() && !dormID.equals("null")) ? dormID : "5203";
+    }
+
+    public String getPhoto() {
+        return Photo;
+    }
+
+    public void setPhoto(String photo) {
+        Photo = (photo != null && !photo.isEmpty() && !photo.equals("null")) ? photo : "";
     }
 }

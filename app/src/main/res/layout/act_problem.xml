@@ -11,103 +11,17 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/imageView2"
             android:layout_width="match_parent"
             android:layout_height="70sp"
             android:background="@drawable/title" />
 
-        <LinearLayout
+        <ListView
+            android:id="@+id/lv_responses"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/maintextbox1_1"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/txt_problem_createdate"
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_marginLeft="20dp"
-                android:background="@drawable/mainlistbackground"
-                android:paddingLeft="40dp"
-                android:paddingTop="5dp"
-                android:text="Create Time"
-                android:textColor="@color/gray"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/txt_customercontent"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/maintextbox1_2"
-            android:paddingLeft="16sp"
-            android:paddingRight="16sp"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/maintextbox2_1"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/txt_problem_repeatedate"
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_marginLeft="20dp"
-                android:background="@drawable/mainlistbackground"
-                android:paddingLeft="40dp"
-                android:paddingTop="5dp"
-                android:text="Create Time"
-                android:textColor="@color/gray"
-                android:textSize="12sp" />
-
-        </LinearLayout>
-
-        <EditText
-            android:id="@+id/et_problem_manacontent"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/maintextbox2_2"
-            android:paddingLeft="16sp"
-            android:paddingRight="16sp"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:gravity="start"/>
-
-        <LinearLayout
-            android:id="@+id/ll_givestart"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16sp"
-            android:layout_marginRight="16sp"
-            android:orientation="horizontal"
-            android:visibility="visible">
-
-            <RatingBar
-                android:id="@+id/rb_score"
-                style="@style/myRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:numStars="5"
-                android:rating="3"
-                android:stepSize="1"
-                android:isIndicator="true"
-                android:visibility="gone"/>
-
-            <Button
-                android:id="@+id/bt_send"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="Send"
-                android:textAllCaps="false"
-                android:textSize="24sp" />
-        </LinearLayout>
-
+            android:layout_height="match_parent"
+            android:divider="@color/trans"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
     </LinearLayout>
 
 </RelativeLayout>

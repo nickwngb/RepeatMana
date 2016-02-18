@@ -13,11 +13,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.goldgrother.repeatmana.Asyn.Login;
 import com.goldgrother.repeatmana.Other.Code;
+import com.goldgrother.repeatmana.Other.FreeDialog;
 import com.goldgrother.repeatmana.Other.HttpConnection;
 import com.goldgrother.repeatmana.Other.URLs;
 import com.goldgrother.repeatmana.Other.UserAccount;
 import com.goldgrother.repeatmana.Other.Uti;
+import com.goldgrother.repeatmana.Other.Vaild;
 import com.goldgrother.repeatmana.R;
 
 import org.apache.http.NameValuePair;
@@ -55,91 +58,45 @@ public class Act_Login extends AppCompatActivity {
 
     private void LoginTask() {
         if (Uti.isNetWork(ctxt)) {
-            new LoginTask().execute();
+            final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt, "Loading...");
+            Login task = new Login(con, new Login.OnLoginListener() {
+                public void finish(Integer result, String UserPhoto, String DormID) {
+                    pd.dismiss();
+                    Log.i("LoginTask", "Result : " + result);
+                    switch (result) {
+                        case Code.Success:
+                            user.setDormID(DormID);
+                            user.setPhoto(UserPhoto);
+                            saveData();
+                            Intent i = new Intent(ctxt, Act_MainScreen.class);
+                            startActivity(i);
+                            finishActivity();
+                            break;
+                        case Code.NoResponse:
+                            Toast.makeText(ctxt, "Server No Response", Toast.LENGTH_SHORT).show();
+                            break;
+                        case Code.Empty:
+                            Toast.makeText(ctxt, "Account or Passowrd is not exist", Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Toast.makeText(ctxt, "Error : " + result, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            task.execute(et_account.getText().toString(), et_password.getText().toString());
         } else {
             Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private class LoginTask extends AsyncTask<String, Integer, Integer> {
-        private ProgressDialog mDialog;
-        private String account, password;
-
-        protected void onPreExecute() {
-            account = et_account.getText().toString();
-            password = et_password.getText().toString();
-            mDialog = new ProgressDialog(ctxt);
-            mDialog.setMessage("Loading...");
-            mDialog.setIndeterminate(false);
-            mDialog.setCancelable(false);
-            mDialog.show();
-        }
-
-        @Override
-        protected Integer doInBackground(String... params) {
-            Integer result = Code.NoResponse;
-            try {
-                // put "phone" post out, get json
-                List<NameValuePair> postFields = new ArrayList<>();
-                postFields.add(new BasicNameValuePair("account", account));
-                postFields.add(new BasicNameValuePair("password", password));
-                JSONObject jobj = con.PostGetJson(URLs.url_login, postFields);
-                if (jobj != null) {
-                    result = jobj.getInt("success");
-                    if (result == Code.Success) {
-                        JSONArray array = jobj.getJSONArray("result");
-                        JSONObject minfo = array.getJSONObject(0);
-                        user.setUserID(account);
-                        user.setDormID(minfo.getString("DormID"));
-                    }
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            mDialog.dismiss();
-            Log.i("LoginTask", "Result:" + result);
-            switch (result) {
-                case Code.Success:
-                    saveData();
-                    Intent i = new Intent(ctxt, Act_MainScreen.class);
-                    startActivity(i);
-                    finish();
-                    break;
-                case Code.NoResponse:
-                    Toast.makeText(ctxt, "Server no response", Toast.LENGTH_SHORT).show();
-                    break;
-                case Code.Empty:
-                    Toast.makeText(ctxt, "Account or Passowrd is not exist", Toast.LENGTH_SHORT).show();
-                    break;
-                default:
-                    Toast.makeText(ctxt, "Error : " + result, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private boolean isVaild() {
-        String acc = et_account.getText().toString();
-        String pwd = et_password.getText().toString();
-        if (acc.isEmpty() || pwd.isEmpty()) {
-            Toast.makeText(ctxt, "Can't input empty", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return true;
-    }
-
     private void InitialAction() {
         bt_login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-//                if (isVaild())
-//                    LoginTask();
-                Intent i = new Intent(ctxt, Act_MainScreen.class);
-                startActivity(i);
+                String acc = et_account.getText().toString();
+                String pwd = et_password.getText().toString();
+                if (Vaild.login(ctxt, acc, pwd)) {
+                    LoginTask();
+                }
             }
         });
     }
@@ -171,5 +128,9 @@ public class Act_Login extends AppCompatActivity {
                 .putString(accountField, et_account.getText().toString())
                 .putString(passwordField, et_password.getText().toString())
                 .commit();
+    }
+
+    private void finishActivity() {
+        this.finish();
     }
 }

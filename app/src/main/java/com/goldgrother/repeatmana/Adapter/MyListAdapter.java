@@ -1,5 +1,6 @@
 package com.goldgrother.repeatmana.Adapter;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +9,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.goldgrother.repeatmana.Asyn.LoadPhoto;
+import com.goldgrother.repeatmana.Other.Code;
+import com.goldgrother.repeatmana.Other.FreeDialog;
+import com.goldgrother.repeatmana.Other.HttpConnection;
 import com.goldgrother.repeatmana.Other.ProblemRecord;
+import com.goldgrother.repeatmana.Other.Uti;
 import com.goldgrother.repeatmana.R;
 
 import java.util.List;
@@ -64,6 +70,12 @@ public class MyListAdapter extends MyBaseAdapter {
         tag.content.setText(item.getResponseContent());
         tag.datetime.setText(item.getResponseDate());
         //item.getProblemStatus();
+
+        if (item.getResponseRole().equals(Code.Flabor)) {
+            LoadPhoto(tag.photo, item.getResponseRole(), item.getFLaborNo(), item.getCustomerNo());
+        } else {
+            LoadPhoto(tag.photo, item.getResponseRole(), item.getResponseID());
+        }
         return v;
     }
 
@@ -73,5 +85,16 @@ public class MyListAdapter extends MyBaseAdapter {
         public TextView content;
         public TextView datetime;
         public ImageView status;
+    }
+
+    private void LoadPhoto(CircleImageView circleImageView, String... datas) {
+        if (Uti.isNetWork(getContext())) {
+            LoadPhoto task = new LoadPhoto(circleImageView, new HttpConnection(), new LoadPhoto.OnLoadPhotoListener() {
+                public void finish() {
+
+                }
+            });
+            task.execute(datas);
+        }
     }
 }

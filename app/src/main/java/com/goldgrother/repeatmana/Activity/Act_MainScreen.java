@@ -16,7 +16,9 @@ import android.widget.Toast;
 
 import com.goldgrother.repeatmana.Adapter.ExpandListAdapter;
 import com.goldgrother.repeatmana.Adapter.MyListAdapter;
+import com.goldgrother.repeatmana.Asyn.LoadProblem;
 import com.goldgrother.repeatmana.Other.Code;
+import com.goldgrother.repeatmana.Other.FreeDialog;
 import com.goldgrother.repeatmana.Other.HttpConnection;
 import com.goldgrother.repeatmana.Other.ProblemRecord;
 import com.goldgrother.repeatmana.Other.URLs;
@@ -69,93 +71,33 @@ public class Act_MainScreen extends AppCompatActivity {
         InitialAction();
     }
 
-    private void LoadingProblem(String status) {
+    private void LoadingProblem(final String status) {
         if (Uti.isNetWork(ctxt)) {
-            new LoadingProblem().execute(status);
-        } else {
-            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private class LoadingProblem extends AsyncTask<String, Integer, Integer> {
-        private ProgressDialog mDialog;
-        private String status;
-
-        @Override
-        protected void onPreExecute() {
-            mDialog = new ProgressDialog(ctxt);
-            mDialog.setMessage("Loading...");
-            mDialog.setIndeterminate(false);
-            mDialog.setCancelable(false);
-            mDialog.show();
-
-        }
-
-        @Override
-        protected Integer doInBackground(String... params) {
-            Integer result = Code.NoResponse;
-            status = params[0];
-            problemlist.clear();
-            Log.d("LoadingProblem", getCurrentDateStart(status));
-            Log.d("LoadingProblem", getCurrentDateEnd());
-            Log.d("LoadingProblem", status);
-            //Log.d("LoadingProblem",user.getDormID());
-            try {
-                // put "phone" post out, get json
-                List<NameValuePair> postFields = new ArrayList<>();
-                postFields.add(new BasicNameValuePair("startDay", getCurrentDateStart(status)));
-                postFields.add(new BasicNameValuePair("endDay", getCurrentDateEnd()));
-                postFields.add(new BasicNameValuePair("status", status));
-                postFields.add(new BasicNameValuePair("dormId", user.getDormID()));
-                JSONObject jobj = con.PostGetJson(URLs.url_loadingproblem, postFields);
-                if (jobj != null) {
-                    result = jobj.getInt("success");
-                    if (result == Code.Success) {
-                        JSONArray array = jobj.getJSONArray("result");
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject ajobj = array.getJSONObject(i);
-                            ProblemRecord fproblem = new ProblemRecord();
-                            fproblem.setPRSNo(ajobj.getInt("PRSNo"));
-                            fproblem.setCustomerNo(ajobj.getString("CustomerNo"));
-                            fproblem.setFLaborNo(ajobj.getString("FLaborNo"));
-                            fproblem.setProblemDescription(ajobj.getString("ProblemDescription"));
-                            fproblem.setCreateProblemDate(ajobj.getString("CreateProblemDate"));
-                            fproblem.setResponseResult(ajobj.getString("ResponseResult"));
-                            fproblem.setResponseDate(ajobj.getString("ResponseDate"));
-                            fproblem.setResponseID(ajobj.getString("ResponseId"));
-                            fproblem.setProblemStatus(ajobj.getString("ProblemStatus"));
-                            fproblem.setSatisfactionDegree(ajobj.getString("SatisfactionDegree"));
-                            fproblem.setWorkNo(ajobj.getString("WorkerNo"));
-                            problemlist.add(fproblem);
-                        }
+            final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt, "Loading...");
+            LoadProblem task = new LoadProblem(con, new LoadProblem.OnLoadProblemListener() {
+                public void finish(Integer result, List<ProblemRecord> list) {
+                    pd.dismiss();
+                    Log.i("LoadingProblem", "Result:" + result);
+                    switch (result) {
+                        case Code.Success:
+                        case Code.Empty:
+                            if (status.equals(Code.Completed)) {
+                                refreshExpandList();
+                            } else {
+                                refreshList();
+                            }
+                            break;
+                        case Code.NoResponse:
+                            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_noresponse), Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Toast.makeText(ctxt, "Error : " + result, Toast.LENGTH_SHORT).show();
                     }
                 }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            mDialog.dismiss();
-            Log.i("LoadingProblem", "Result:" + result);
-            switch (result) {
-                case Code.Success:
-                case Code.Empty:
-                    if (status.equals(Code.Completed)) {
-                        refreshExpandList();
-                    } else {
-                        refreshList();
-                    }
-                    break;
-                case Code.NoResponse:
-                    Toast.makeText(ctxt, "Server no response", Toast.LENGTH_SHORT).show();
-                    break;
-                default:
-                    Toast.makeText(ctxt, "Error : " + result, Toast.LENGTH_SHORT).show();
-            }
+            });
+            task.execute(getCurrentDateStart(status), getCurrentDateEnd(), status, user.getDormID());
+        } else {
+            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -235,8 +177,9 @@ public class Act_MainScreen extends AppCompatActivity {
         // ListView setting
         lv_problems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ProblemRecord pr = problemlist.get(position);
                 Intent it = new Intent(ctxt, Act_Problem.class);
-                it.putExtra("ProblemRecord", problemlist.get(position));
+                it.putExtra("PRSNo", pr.getPRSNo());
                 startActivityForResult(it, ActProblem);
             }
         });
@@ -245,8 +188,9 @@ public class Act_MainScreen extends AppCompatActivity {
         elv_workers.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 List<ProblemRecord> list = list_workers.get(groupPosition).getItems(); // this worker problems
+                ProblemRecord pr = list.get(childPosition);
                 Intent it = new Intent(ctxt, Act_Problem.class);
-                it.putExtra("ProblemRecord", list.get(childPosition));
+                it.putExtra("PRSNo", pr.getPRSNo());
                 startActivity(it);
                 return false;
             }

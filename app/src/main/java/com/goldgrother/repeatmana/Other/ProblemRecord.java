@@ -1,14 +1,14 @@
 package com.goldgrother.repeatmana.Other;
 
-import java.io.Serializable;
 
 /**
  * Created by user on 2015/12/10.
  */
-public class ProblemRecord implements Serializable {
+public class ProblemRecord {
     private int PRSNo;
     private String CustomerNo;
     private String FLaborNo;
+    private String WorkNo;
     private String SatisfactionDegree;
     private String ProblemStatus;
     // Last ProblemResponse
@@ -74,6 +74,14 @@ public class ProblemRecord implements Serializable {
 
     public void setFLaborNo(String FLaborNo) {
         this.FLaborNo = FLaborNo;
+    }
+
+    public String getWorkNo() {
+        return WorkNo;
+    }
+
+    public void setWorkNo(String workNo) {
+        WorkNo = workNo;
     }
 
     public String getSatisfactionDegree() {
