@@ -53,6 +53,9 @@ public class LoadProblem extends AsyncTask<String, Integer, Integer> {
             postFields.add(new BasicNameValuePair("endDay", endDay));
             postFields.add(new BasicNameValuePair("status", status));
             postFields.add(new BasicNameValuePair("dormId", dormId));
+            // Fake Data Useless
+            postFields.add(new BasicNameValuePair("FLaborNo", "1234"));
+            postFields.add(new BasicNameValuePair("CustomerNo", "1234"));
             JSONObject jobj = conn.PostGetJson(URLs.url_allproblem, postFields);
             if (jobj != null) {
                 result = jobj.getInt("success");

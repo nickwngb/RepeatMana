@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -55,4 +54,11 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-</RelativeLayout>
+    <Button
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:text="IMG"
+        android:id="@+id/bt_main_image"
+        android:layout_gravity="left|bottom" />
+
+</FrameLayout>

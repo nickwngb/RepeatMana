@@ -47,21 +47,24 @@ public class LoadPhoto extends AsyncTask<String, Integer, Integer> {
         try {
             role = datas[0];
             List<NameValuePair> params = new ArrayList<>();
-
+            params.add(new BasicNameValuePair("Role", role));
             if (role.equals(Code.Flabor)) {
                 params.add(new BasicNameValuePair("CustomerNo", datas[1]));
                 params.add(new BasicNameValuePair("FLaborNo", datas[2]));
+                params.add(new BasicNameValuePair("UserID", "12345"));
             } else if (role.equals(Code.Manager)) {
+                params.add(new BasicNameValuePair("CustomerNo", "12345"));
+                params.add(new BasicNameValuePair("FLaborNo", "12345"));
                 params.add(new BasicNameValuePair("UserID", datas[1]));
             }
             HttpConnection conn = new HttpConnection();
             JSONObject jobj = conn.PostGetJson(URLs.url_loadimage, params);
-            if (jobj == null)
-                return null;
-            result = jobj.getInt("success");
-            if (result == Code.Success) {
-                String base64 = jobj.getString("photo");
-                bitmap = BitmapTransformer.Base64ToBitmap(base64);
+            if (jobj != null) {
+                result = jobj.getInt("success");
+                if (result == Code.Success) {
+                    String base64 = jobj.getString("photo");
+                    bitmap = BitmapTransformer.Base64ToBitmap(base64);
+                }
             }
         } catch (JSONException e) {
             Log.i("JSONException", e.toString());
@@ -72,13 +75,15 @@ public class LoadPhoto extends AsyncTask<String, Integer, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         super.onPostExecute(result);
-        if (rf_circleImg != null) {
-            ImageView imageView = rf_circleImg.get();
-            if (imageView != null) {
-                if (bitmap != null) {
-                    imageView.setImageBitmap(bitmap);
-                    imageView.setTag(1);
-                    mListener.finish();
+        if (result == Code.Success) {
+            if (rf_circleImg != null) {
+                ImageView imageView = rf_circleImg.get();
+                if (imageView != null) {
+                    if (bitmap != null) {
+                        imageView.setImageBitmap(bitmap);
+                        imageView.setTag(1);
+                        mListener.finish();
+                    }
                 }
             }
         }
