@@ -29,6 +29,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +63,7 @@ public class Act_Login extends AppCompatActivity {
         if (Uti.isNetWork(ctxt)) {
             final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt, "Loading...");
             Login task = new Login(con, new Login.OnLoginListener() {
-                public void finish(Integer result,String account,String password, String UserPhoto, String DormID) {
+                public void finish(Integer result, String account, String password, String UserPhoto, String DormID) {
                     pd.dismiss();
                     Log.i("LoginTask", "Result : " + result);
                     switch (result) {
@@ -97,10 +100,7 @@ public class Act_Login extends AppCompatActivity {
                 String acc = et_account.getText().toString();
                 String pwd = et_password.getText().toString();
                 if (Vaild.login(ctxt, acc, pwd)) {
-                    //LoginTask();
-                    Intent i = new Intent(ctxt, Act_MainScreen.class);
-                    startActivity(i);
-                    finishActivity();
+                    LoginTask();
                 }
 
             }
@@ -125,7 +125,7 @@ public class Act_Login extends AppCompatActivity {
         String acc = et_account.getText().toString();
         String pwd = et_password.getText().toString();
         if (Vaild.login(ctxt, acc, pwd)) {
-            //LoginTask();
+            LoginTask();
         }
     }
 
@@ -139,5 +139,21 @@ public class Act_Login extends AppCompatActivity {
 
     private void finishActivity() {
         this.finish();
+    }
+
+    public String getMD5(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] messageDigest = md.digest(input.getBytes());
+            BigInteger number = new BigInteger(1, messageDigest);
+            String hashtext = number.toString(16);
+            // Now we need to zero pad it if you actually want the full 32 chars.
+            while (hashtext.length() < 32) {
+                hashtext = "0" + hashtext;
+            }
+            return hashtext;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

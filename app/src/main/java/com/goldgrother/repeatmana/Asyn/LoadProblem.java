@@ -48,11 +48,11 @@ public class LoadProblem extends AsyncTask<String, Integer, Integer> {
         try {
             // put "phone" post out, get json
             List<NameValuePair> postFields = new ArrayList<>();
-            postFields.add(new BasicNameValuePair("role", Code.Manager));
-            postFields.add(new BasicNameValuePair("startDay", startDay));
-            postFields.add(new BasicNameValuePair("endDay", endDay));
+            postFields.add(new BasicNameValuePair("Role", Code.Manager));
+            postFields.add(new BasicNameValuePair("startday", startDay));
+            postFields.add(new BasicNameValuePair("endday", endDay));
             postFields.add(new BasicNameValuePair("status", status));
-            postFields.add(new BasicNameValuePair("dormId", dormId));
+            postFields.add(new BasicNameValuePair("dormid", dormId));
             // Fake Data Useless
             postFields.add(new BasicNameValuePair("FLaborNo", "1234"));
             postFields.add(new BasicNameValuePair("CustomerNo", "1234"));
@@ -60,7 +60,7 @@ public class LoadProblem extends AsyncTask<String, Integer, Integer> {
             if (jobj != null) {
                 result = jobj.getInt("success");
                 if (result == Code.Success) {
-                    JSONArray array = jobj.getJSONArray("result");
+                    JSONArray array = jobj.getJSONArray("fproblems");
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject ajobj = array.getJSONObject(i);
                         ProblemRecord fproblem = new ProblemRecord();
