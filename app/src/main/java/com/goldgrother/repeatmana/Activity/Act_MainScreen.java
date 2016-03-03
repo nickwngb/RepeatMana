@@ -84,6 +84,8 @@ public class Act_MainScreen extends AppCompatActivity {
             LoadProblem task = new LoadProblem(con, new LoadProblem.OnLoadProblemListener() {
                 public void finish(Integer result, List<ProblemRecord> list) {
                     pd.dismiss();
+                    problemlist.clear();
+                    problemlist.addAll(list);
                     Log.i("LoadingProblem", "Result:" + result);
                     switch (result) {
                         case Code.Success:
@@ -116,6 +118,7 @@ public class Act_MainScreen extends AppCompatActivity {
             LoadAllLastestResponse task = new LoadAllLastestResponse(con, new LoadAllLastestResponse.OnLoadAllResponseListener() {
                 public void finish(Integer result, List<ProblemResponse> list) {
                     pd.dismiss();
+                    Log.d("LoadAllLastestResponse", "Result:" + result);
                     switch (result) {
                         case Code.Success:
                         case Code.Empty:

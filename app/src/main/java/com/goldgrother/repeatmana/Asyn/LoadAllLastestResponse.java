@@ -44,7 +44,7 @@ public class LoadAllLastestResponse extends AsyncTask<List<Integer>, Integer, In
         try {
             List<NameValuePair> postFields = new ArrayList<>();
             for (Integer PRSNo : PRSNos) {
-                postFields.add(new BasicNameValuePair("PRSNos[]", PRSNo + ""));
+                postFields.add(new BasicNameValuePair("PRSNos", PRSNo + ""));
             }
             JSONObject jobj = conn.PostGetJson(URLs.url_response, postFields);
             if (jobj != null) {

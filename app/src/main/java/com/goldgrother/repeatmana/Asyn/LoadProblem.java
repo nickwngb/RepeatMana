@@ -1,6 +1,7 @@
 package com.goldgrother.repeatmana.Asyn;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.goldgrother.repeatmana.Other.Code;
 import com.goldgrother.repeatmana.Other.HttpConnection;
@@ -54,8 +55,9 @@ public class LoadProblem extends AsyncTask<String, Integer, Integer> {
             postFields.add(new BasicNameValuePair("status", status));
             postFields.add(new BasicNameValuePair("dormid", dormId));
             // Fake Data Useless
-            postFields.add(new BasicNameValuePair("FLaborNo", "1234"));
-            postFields.add(new BasicNameValuePair("CustomerNo", "1234"));
+            postFields.add(new BasicNameValuePair("FLaborNo", "00001"));
+            postFields.add(new BasicNameValuePair("CustomerNo", "00001"));
+
             JSONObject jobj = conn.PostGetJson(URLs.url_allproblem, postFields);
             if (jobj != null) {
                 result = jobj.getInt("success");
