@@ -73,9 +73,10 @@ public class Act_Responses extends Activity {
                     pd.dismiss();
                     switch (result) {
                         case Code.Success:
-                            responses = list;
-                            Toast.makeText(ctxt, "Refresh", Toast.LENGTH_SHORT).show();
+                            responses.clear();
+                            responses.addAll(list);
                             refreshResponseContent();
+                            scrollMyListViewToBottom();
                             break;
                         case Code.Empty:
                             Toast.makeText(ctxt, "Empty", Toast.LENGTH_SHORT).show();
@@ -99,7 +100,14 @@ public class Act_Responses extends Activity {
             adapter.notifyDataSetChanged();
         }
     }
-
+    private void scrollMyListViewToBottom() {
+        lv_responses.post(new Runnable() {
+            public void run() {
+                // Select the last row so it will scroll into view...
+                lv_responses.setSelection(lv_responses.getCount() - 1);
+            }
+        });
+    }
     private void SendResponse(String... params) {
         if (Uti.isNetWork(ctxt)) {
             final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt, "Loading...");
@@ -108,6 +116,7 @@ public class Act_Responses extends Activity {
                     pd.dismiss();
                     switch (result) {
                         case Code.Success:
+                            et_content.setText("");
                             LoadAllResponse(PRSNo + "");
                             break;
                         case Code.Fail:
@@ -131,7 +140,7 @@ public class Act_Responses extends Activity {
         res = getResources();
         conn = new HttpConnection();
         responses = new ArrayList<>();
-        adapter = new ResponsesAdapter(ctxt,FLaborNo,CustomerNo, responses);
+        adapter = new ResponsesAdapter(ctxt, FLaborNo, CustomerNo, responses);
     }
 
     private void InitialUI() {

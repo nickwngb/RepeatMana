@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
+import com.goldgrother.repeatmana.Other.MyTime;
 import com.goldgrother.repeatmana.Other.ProblemRecord;
 import com.goldgrother.repeatmana.Other.Worker;
 import com.goldgrother.repeatmana.R;
@@ -43,8 +44,8 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition,
                              boolean isLastChild, View v, ViewGroup parent) {
 
-        ProblemRecord child = (ProblemRecord) getChild(groupPosition, childPosition);
-        ChildTag tag = null;
+        final ProblemRecord child = (ProblemRecord) getChild(groupPosition, childPosition);
+        ChildTag tag;
         if (v == null) {
             tag = new ChildTag();
             v = inflater.inflate(R.layout.item_exlist_child, null);
@@ -54,8 +55,8 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
         } else {
             tag = (ChildTag) v.getTag();
         }
-        //tag.date.setText(child.getCreateProblemDate());
-        //tag.content.setText(child.getProblemDescription());
+        tag.content.setText(child.getResponseContent());
+        tag.date.setText(MyTime.convertTime(child.getResponseDate()));
         return v;
     }
 

@@ -36,9 +36,12 @@ import com.goldgrother.repeatmana.Other.Uti;
 import com.goldgrother.repeatmana.Other.Worker;
 import com.goldgrother.repeatmana.R;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -76,9 +79,11 @@ public class Act_MainScreen extends AppCompatActivity {
         InitialSomething();
         InitialUI();
         InitialAction();
+        LoadingProblem(Code.Untreated);
     }
 
     private void LoadingProblem(final String status) {
+        LastClickStatus = status;
         if (Uti.isNetWork(ctxt)) {
             final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt, "Loading...");
             LoadProblem task = new LoadProblem(con, new LoadProblem.OnLoadProblemListener() {
@@ -164,8 +169,34 @@ public class Act_MainScreen extends AppCompatActivity {
     private void refreshList() {
         elv_workers.setVisibility(View.GONE);
         lv_problems.setVisibility(View.VISIBLE);
+        sortByDate();
         if (list_adapter != null) {
             list_adapter.notifyDataSetChanged();
+        }
+    }
+
+    private void sortByDate() {
+        for (int i = 0; i < problemlist.size() - 1; i++) {
+            boolean swapped = false;
+            for (int j = 0; j < problemlist.size() - i - 1; j++) {
+                String a = problemlist.get(j).getResponseDate();
+                String b = problemlist.get(j + 1).getResponseDate();
+                //設定日期格式
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                try {
+                    Date date1 = sdf.parse(a);
+                    Date date2 = sdf.parse(b);
+                    if (date1.before(date2)) {
+                        Collections.swap(problemlist, j, j + 1);
+                        swapped = true;
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (!swapped) {
+                break;
+            }
         }
     }
 
@@ -244,19 +275,16 @@ public class Act_MainScreen extends AppCompatActivity {
     private void InitialAction() {
         bt_untreated.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                LastClickStatus = Code.Untreated;
                 LoadingProblem(Code.Untreated);
             }
         });
         bt_processing.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                LastClickStatus = Code.Processing;
                 LoadingProblem(Code.Processing);
             }
         });
         bt_completed.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                LastClickStatus = Code.Completed;
                 LoadingProblem(Code.Completed);
             }
         });

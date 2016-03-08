@@ -46,7 +46,8 @@
         <ListView
             android:id="@+id/lv_problems"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:divider="@color/trans" />
 
         <ExpandableListView
             android:id="@+id/elv_workers"
@@ -55,10 +56,10 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/bt_main_image"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:text="IMG"
-        android:id="@+id/bt_main_image"
-        android:layout_gravity="left|bottom" />
+        android:layout_gravity="left|bottom"
+        android:text="IMG" />
 
 </FrameLayout>

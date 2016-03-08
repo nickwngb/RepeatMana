@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.goldgrother.repeatmana.Asyn.LoadPhoto;
 import com.goldgrother.repeatmana.Other.Code;
 import com.goldgrother.repeatmana.Other.HttpConnection;
+import com.goldgrother.repeatmana.Other.MyTime;
 import com.goldgrother.repeatmana.Other.ProblemRecord;
 import com.goldgrother.repeatmana.Other.Uti;
 import com.goldgrother.repeatmana.R;
@@ -63,7 +64,7 @@ public class MyListAdapter extends MyBaseAdapter {
         // setText
         tag.name.setText(item.getResponseID());
         tag.content.setText(item.getResponseContent());
-        tag.datetime.setText(item.getResponseDate());
+        tag.datetime.setText(MyTime.convertTime(item.getResponseDate()));
         //item.getProblemStatus();
 
         // photo

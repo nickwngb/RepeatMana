@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.goldgrother.repeatmana.Asyn.LoadPhoto;
 import com.goldgrother.repeatmana.Other.Code;
 import com.goldgrother.repeatmana.Other.HttpConnection;
+import com.goldgrother.repeatmana.Other.MyTime;
 import com.goldgrother.repeatmana.Other.ProblemResponse;
 import com.goldgrother.repeatmana.Other.Uti;
 import com.goldgrother.repeatmana.R;
@@ -73,13 +74,13 @@ public class ResponsesAdapter extends MyBaseAdapter {
             //if (tag.f_photo.getTag() != null)
             //LoadPhoto(tag.f_photo,item.getResponseRole(),FLaborNo,CustomerNo);
             tag.f_name.setText(item.getResponseID());
-            tag.f_datetime.setText(item.getResponseDate());
+            tag.f_datetime.setText(MyTime.convertTimeForResponse(item.getResponseDate()));
         } else {
             tag.m_content.setText(item.getResponseContent());
 //            if (tag.m_photo.getTag() != null)
 //                LoadPhoto(tag.m_photo, item.getResponseRole(), item.getResponseID());
             tag.m_name.setText(item.getResponseID());
-            tag.m_datetime.setText(item.getResponseDate());
+            tag.m_datetime.setText(MyTime.convertTimeForResponse(item.getResponseDate()));
         }
 
         // background
