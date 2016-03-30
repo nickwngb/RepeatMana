@@ -7,10 +7,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.goldgrother.repeatmana.Asyn.LoadPhoto;
+import com.goldgrother.repeatmana.ImageLoadHelp.ImageLoader;
+import com.goldgrother.repeatmana.Other.BitmapTransformer;
 import com.goldgrother.repeatmana.Other.Code;
 import com.goldgrother.repeatmana.Other.HttpConnection;
 import com.goldgrother.repeatmana.Other.MyTime;
 import com.goldgrother.repeatmana.Other.ProblemRecord;
+import com.goldgrother.repeatmana.Other.UserAccount;
 import com.goldgrother.repeatmana.Other.Uti;
 import com.goldgrother.repeatmana.R;
 
@@ -21,13 +24,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by v on 2016/1/2.
  */
-public class MyListAdapter extends MyBaseAdapter {
+public class ProblemListAdapter extends MyBaseAdapter {
 
     private List<ProblemRecord> list;
+    private ImageLoader imageLoader;
 
-    public MyListAdapter(Context context, List<ProblemRecord> list) {
+    public ProblemListAdapter(Context context, List<ProblemRecord> list) {
         super(context);
         this.list = list;
+        this.imageLoader = new ImageLoader(context);
     }
 
     @Override
@@ -65,33 +70,34 @@ public class MyListAdapter extends MyBaseAdapter {
         tag.name.setText(item.getResponseID());
         tag.content.setText(item.getResponseContent());
         tag.datetime.setText(MyTime.convertTime(item.getResponseDate()));
-        //item.getProblemStatus();
-
-        // photo
-//        if (item.getResponseRole().equals(Code.Flabor)) {
-//            LoadPhoto(tag.photo, item.getResponseRole(), item.getFLaborNo(), item.getCustomerNo());
-//        } else {
-//            LoadPhoto(tag.photo, item.getResponseRole(), item.getResponseID());
-//        }
+        if (item.getProblemStatus() != null) {
+            switch (item.getProblemStatus()) {
+                case Code.Untreated:
+                    tag.status.setBackground(getResources().getDrawable(R.drawable.status_untreated));
+                    break;
+                case Code.Processing:
+                    //tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_processing));
+                    break;
+                case Code.Completed:
+                    tag.status.setBackground(getResources().getDrawable(R.drawable.status_completed));
+                    break;
+            }
+        }
+        if (item.getResponseRole() != null) {
+            if (item.getResponseRole().equals(Code.Manager)) {
+                tag.photo.setImageBitmap(BitmapTransformer.Base64ToBitmap(UserAccount.getUserAccount().getPhoto()));
+            } else {
+                imageLoader.DisplayImage(item.getCustomerNo(), item.getFLaborNo(), tag.photo);
+            }
+        }
         return v;
     }
 
-    class ViewTag {
+    static class ViewTag {
         public CircleImageView photo;
         public TextView name;
         public TextView content;
         public TextView datetime;
         public ImageView status;
-    }
-
-    private void LoadPhoto(CircleImageView circleImageView, String... datas) {
-        if (Uti.isNetWork(getContext())) {
-            LoadPhoto task = new LoadPhoto(circleImageView, new HttpConnection(), new LoadPhoto.OnLoadPhotoListener() {
-                public void finish() {
-
-                }
-            });
-            task.execute(datas);
-        }
     }
 }

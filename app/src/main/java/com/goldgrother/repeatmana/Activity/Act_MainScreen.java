@@ -21,7 +21,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.goldgrother.repeatmana.Adapter.ExpandListAdapter;
-import com.goldgrother.repeatmana.Adapter.MyListAdapter;
+import com.goldgrother.repeatmana.Adapter.ProblemListAdapter;
 import com.goldgrother.repeatmana.Asyn.LoadAllLastestResponse;
 import com.goldgrother.repeatmana.Asyn.LoadProblem;
 import com.goldgrother.repeatmana.Asyn.UploadPhoto;
@@ -63,7 +63,7 @@ public class Act_MainScreen extends AppCompatActivity {
     private ListView lv_problems;
     private ExpandableListView elv_workers;
     // Adapter
-    private MyListAdapter list_adapter;
+    private ProblemListAdapter list_adapter;
     private ExpandListAdapter exlist_adapter;
     // Other
     private List<ProblemRecord> problemlist;
@@ -338,7 +338,7 @@ public class Act_MainScreen extends AppCompatActivity {
         problemlist = new ArrayList<>();
         responselist = new ArrayList<>();
         list_workers = new ArrayList<>();
-        list_adapter = new MyListAdapter(ctxt, problemlist);
+        list_adapter = new ProblemListAdapter(ctxt, problemlist);
         exlist_adapter = new ExpandListAdapter(ctxt, list_workers);
     }
 

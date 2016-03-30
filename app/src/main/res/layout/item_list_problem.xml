@@ -14,7 +14,7 @@
             android:layout_height="60dp"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
-            android:src="@drawable/peoople"
+            android:src="@drawable/people"
             android:id="@+id/img_item_photo" />
 
         <FrameLayout
@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|bottom"
-                android:background="@drawable/list_complete" />
+                android:background="@drawable/status_completed" />
 
             <LinearLayout
                 android:layout_width="match_parent"

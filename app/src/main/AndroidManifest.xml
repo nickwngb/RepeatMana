@@ -41,7 +41,7 @@
         <activity
             android:name=".Activity.Act_Responses"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

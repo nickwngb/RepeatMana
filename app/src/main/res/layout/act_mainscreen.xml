@@ -23,24 +23,21 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/bt_untreated"
-                android:textAllCaps="false" />
+                android:background="@drawable/bt_untreated" />
 
             <Button
                 android:id="@+id/bt_main_processing"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/bt_proccessing"
-                android:textAllCaps="false" />
+                android:background="@drawable/bt_complete"/>
 
             <Button
                 android:id="@+id/bt_main_completed"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/bt_complete"
-                android:textAllCaps="false" />
+                android:background="@drawable/bt_complete" />
         </LinearLayout>
 
         <ListView

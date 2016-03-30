@@ -124,9 +124,8 @@ public class Act_Login extends AppCompatActivity {
         et_password.setText(settings.getString(passwordField, ""));
         String acc = et_account.getText().toString();
         String pwd = et_password.getText().toString();
-        if (Vaild.login(ctxt, acc, pwd)) {
-            LoginTask();
-        }
+        if (acc.isEmpty() || pwd.isEmpty()) return;
+        LoginTask();
     }
 
     public void saveData() {
