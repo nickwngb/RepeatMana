@@ -77,7 +77,6 @@ public class ImageLoader {
         //Check if image already downloaded
         if (imageViewReused(p))
             return;
-
         new LoadPhotoTask(p).execute(customerNo, flaborNo);
 
 
@@ -145,21 +144,21 @@ public class ImageLoader {
             Integer result;
             try {
                 List<NameValuePair> params = new ArrayList<>();
-                params.add(new BasicNameValuePair("Role", "1"));
+                params.add(new BasicNameValuePair("Role", "0"));
                 params.add(new BasicNameValuePair("CustomerNo", datas[0]));
                 params.add(new BasicNameValuePair("FLaborNo", datas[1]));
                 params.add(new BasicNameValuePair("UserID", "12345"));
-
                 JSONObject jobj = new HttpConnection().PostGetJson(URLs.url_loadimage, params);
                 if (jobj != null) {
                     result = jobj.getInt("success");
+                    Log.d("LoadPhotoTask", "Result " + result);
                     if (result == Code.Success) {
                         String base64 = jobj.getString("photo");
                         return BitmapTransformer.Base64ToBitmap(base64);
                     }
                 }
             } catch (JSONException e) {
-                Log.i("JSONException", e.toString());
+                Log.i("LoadPhotoTask", e.toString());
             }
             return null;
         }

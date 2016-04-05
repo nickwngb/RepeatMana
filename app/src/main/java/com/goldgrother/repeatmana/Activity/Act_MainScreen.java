@@ -25,6 +25,7 @@ import com.goldgrother.repeatmana.Adapter.ProblemListAdapter;
 import com.goldgrother.repeatmana.Asyn.LoadAllLastestResponse;
 import com.goldgrother.repeatmana.Asyn.LoadProblem;
 import com.goldgrother.repeatmana.Asyn.UploadPhoto;
+import com.goldgrother.repeatmana.Other.BitmapTransformer;
 import com.goldgrother.repeatmana.Other.Code;
 import com.goldgrother.repeatmana.Other.FreeDialog;
 import com.goldgrother.repeatmana.Other.Hardware;
@@ -246,7 +247,7 @@ public class Act_MainScreen extends AppCompatActivity {
         return sdFormat.format(new java.util.Date()) + " 23:59:59";
     }
 
-    private void UploadPhoto(String photo) {
+    private void UploadPhoto(Bitmap photo) {
         if (Uti.isNetWork(ctxt)) {
             final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
             UploadPhoto task = new UploadPhoto(con, new UploadPhoto.OnUpdatePhotoListener() {
@@ -265,8 +266,8 @@ public class Act_MainScreen extends AppCompatActivity {
                             break;
                     }
                 }
-            });
-            task.execute(user.getUserID(), photo);
+            }, photo);
+            task.execute(Code.Manager, user.getUserID());
         } else {
             Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
         }
@@ -384,7 +385,7 @@ public class Act_MainScreen extends AppCompatActivity {
                     iv.setImageBitmap(result);
                     new AlertDialog.Builder(ctxt, AlertDialog.THEME_HOLO_LIGHT).setView(iv).setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            //UploadPhoto(BitmapTransformer.BitmapToBase64(result));
+                            UploadPhoto(result);
                         }
                     }).setNegativeButton("Cancel", null).show();
                     break;

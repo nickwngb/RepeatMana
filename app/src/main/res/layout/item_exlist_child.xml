@@ -10,7 +10,7 @@
         android:layout_height="50dp"
         android:layout_marginLeft="70dp"
         android:ellipsize="end"
-        android:maxLines="2"
+        android:gravity="center_vertical"
         android:text="Description"
         android:textSize="20sp" />
 

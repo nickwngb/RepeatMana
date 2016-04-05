@@ -9,10 +9,13 @@ import android.widget.TextView;
 
 
 import com.goldgrother.repeatmana.Asyn.LoadPhoto;
+import com.goldgrother.repeatmana.ImageLoadHelp.ImageLoader;
+import com.goldgrother.repeatmana.Other.BitmapTransformer;
 import com.goldgrother.repeatmana.Other.Code;
 import com.goldgrother.repeatmana.Other.HttpConnection;
 import com.goldgrother.repeatmana.Other.MyTime;
 import com.goldgrother.repeatmana.Other.ProblemResponse;
+import com.goldgrother.repeatmana.Other.UserAccount;
 import com.goldgrother.repeatmana.Other.Uti;
 import com.goldgrother.repeatmana.R;
 
@@ -25,14 +28,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class ResponsesAdapter extends MyBaseAdapter {
     private List<ProblemResponse> list;
+    private ImageLoader imageLoader;
     private String FLaborNo;
     private String CustomerNo;
 
     public ResponsesAdapter(Context context, String FLaborNo, String CustomerNo, List<ProblemResponse> list) {
         super(context);
+        this.list = list;
+        this.imageLoader = new ImageLoader(context);
         this.FLaborNo = FLaborNo;
         this.CustomerNo = CustomerNo;
-        this.list = list;
     }
 
     @Override
@@ -71,36 +76,24 @@ public class ResponsesAdapter extends MyBaseAdapter {
         }
         if (item.getResponseRole().equals(Code.Flabor)) {
             tag.f_content.setText(item.getResponseContent());
-            //if (tag.f_photo.getTag() != null)
-            //LoadPhoto(tag.f_photo,item.getResponseRole(),FLaborNo,CustomerNo);
+            imageLoader.DisplayImage(CustomerNo, FLaborNo, tag.f_photo);
             tag.f_name.setText(item.getResponseID());
             tag.f_datetime.setText(MyTime.convertTimeForResponse(item.getResponseDate()));
         } else {
             tag.m_content.setText(item.getResponseContent());
-//            if (tag.m_photo.getTag() != null)
-//                LoadPhoto(tag.m_photo, item.getResponseRole(), item.getResponseID());
+            tag.m_photo.setImageBitmap(BitmapTransformer.Base64ToBitmap(UserAccount.getUserAccount().getPhoto()));
             tag.m_name.setText(item.getResponseID());
             tag.m_datetime.setText(MyTime.convertTimeForResponse(item.getResponseDate()));
         }
 
         // background
         if (item.getResponseRole().equals(Code.Flabor)) {
-            final int sdk = android.os.Build.VERSION.SDK_INT;
-            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                tag.background.setBackgroundDrawable(getResources().getDrawable(R.drawable.textbox_content));
-            } else {
-                tag.background.setBackground(getResources().getDrawable(R.drawable.textbox_content));
-            }
+            tag.background.setBackground(getResources().getDrawable(R.drawable.block_flabor));
             tag.f_block.setVisibility(View.VISIBLE);
             tag.m_block.setVisibility(View.GONE);
 
         } else {
-            final int sdk = android.os.Build.VERSION.SDK_INT;
-            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                tag.background.setBackgroundDrawable(getResources().getDrawable(R.drawable.textbox_reponse));
-            } else {
-                tag.background.setBackground(getResources().getDrawable(R.drawable.textbox_reponse));
-            }
+            tag.background.setBackground(getResources().getDrawable(R.drawable.block_manager));
             tag.f_block.setVisibility(View.GONE);
             tag.m_block.setVisibility(View.VISIBLE);
         }
