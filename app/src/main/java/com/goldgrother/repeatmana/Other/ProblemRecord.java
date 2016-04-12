@@ -16,6 +16,7 @@ public class ProblemRecord {
     private String ResponseDate;
     private String ResponseID;
     private String ResponseRole;
+
     public ProblemRecord() {
 
     }

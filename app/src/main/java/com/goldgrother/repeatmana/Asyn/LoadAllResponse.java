@@ -26,12 +26,10 @@ public class LoadAllResponse extends AsyncTask<String, Integer, Integer> {
     }
 
     private final OnLoadAllResponseListener mListener;
-    private final HttpConnection conn;
     private List<ProblemResponse> list;
     private String PRSNo;
 
-    public LoadAllResponse(HttpConnection conn, OnLoadAllResponseListener mListener) {
-        this.conn = conn;
+    public LoadAllResponse(OnLoadAllResponseListener mListener) {
         this.mListener = mListener;
         this.list = new ArrayList<>();
     }
@@ -43,7 +41,7 @@ public class LoadAllResponse extends AsyncTask<String, Integer, Integer> {
         try {
             List<NameValuePair> params = new ArrayList<>();
             params.add(new BasicNameValuePair("PRSNo", PRSNo));
-            JSONObject jobj = conn.PostGetJson(URLs.url_allresponse, params);
+            JSONObject jobj = new HttpConnection().PostGetJson(URLs.url_allresponse, params);
             if (jobj != null) {
                 result = jobj.getInt("success");
                 if (result == Code.Success) {

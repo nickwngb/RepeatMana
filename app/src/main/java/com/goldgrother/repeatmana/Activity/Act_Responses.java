@@ -5,25 +5,30 @@ package com.goldgrother.repeatmana.Activity;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.goldgrother.repeatmana.Adapter.ResponsesAdapter;
+import com.goldgrother.repeatmana.Asyn.ChangeStatus;
 import com.goldgrother.repeatmana.Asyn.LoadAllResponse;
 import com.goldgrother.repeatmana.Asyn.SendResponse;
 import com.goldgrother.repeatmana.Other.Code;
-import com.goldgrother.repeatmana.Other.FreeDialog;
+import com.goldgrother.repeatmana.Other.MyDialog;
 import com.goldgrother.repeatmana.Other.Hardware;
 import com.goldgrother.repeatmana.Other.HttpConnection;
-import com.goldgrother.repeatmana.Other.ProblemRecord;
 import com.goldgrother.repeatmana.Other.ProblemResponse;
 import com.goldgrother.repeatmana.Other.UserAccount;
 import com.goldgrother.repeatmana.Other.Uti;
@@ -39,8 +44,6 @@ public class Act_Responses extends Activity {
     //
     private Context ctxt = Act_Responses.this;
     private UserAccount user;
-    private HttpConnection conn;
-    private Resources res;
     // UI
     private ListView lv_responses;
     // adapter
@@ -61,14 +64,13 @@ public class Act_Responses extends Activity {
         InitialSomething();
         InitialUI();
         InitialAction();
-        getExtras();
         LoadAllResponse(PRSNo + "");
     }
 
     private void LoadAllResponse(String PRSNo) {
         if (Uti.isNetWork(ctxt)) {
-            final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt, "Loading...");
-            LoadAllResponse task = new LoadAllResponse(conn, new LoadAllResponse.OnLoadAllResponseListener() {
+            final ProgressDialog pd = MyDialog.getProgressDialog(ctxt, "Loading...");
+            LoadAllResponse task = new LoadAllResponse(new LoadAllResponse.OnLoadAllResponseListener() {
                 public void finish(Integer result, List<ProblemResponse> list) {
                     pd.dismiss();
                     switch (result) {
@@ -100,18 +102,19 @@ public class Act_Responses extends Activity {
             adapter.notifyDataSetChanged();
         }
     }
+
     private void scrollMyListViewToBottom() {
         lv_responses.post(new Runnable() {
             public void run() {
-                // Select the last row so it will scroll into view...
                 lv_responses.setSelection(lv_responses.getCount() - 1);
             }
         });
     }
+
     private void SendResponse(String... params) {
         if (Uti.isNetWork(ctxt)) {
-            final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt, "Loading...");
-            SendResponse task = new SendResponse(conn, new SendResponse.OnSendResponseListener() {
+            final ProgressDialog pd = MyDialog.getProgressDialog(ctxt, "Loading...");
+            SendResponse task = new SendResponse(new SendResponse.OnSendResponseListener() {
                 public void finish(Integer result) {
                     pd.dismiss();
                     switch (result) {
@@ -120,11 +123,39 @@ public class Act_Responses extends Activity {
                             LoadAllResponse(PRSNo + "");
                             break;
                         case Code.Fail:
+                            Toast.makeText(ctxt, "Fail", Toast.LENGTH_SHORT).show();
                             break;
+                        case Code.NoResponse:
+                            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_noresponse), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
             task.execute(params);
+        } else {
+            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void ChangeStatus(String status) {
+        if (Uti.isNetWork(ctxt)) {
+            final ProgressDialog pd = MyDialog.getProgressDialog(ctxt, "Loading...");
+            ChangeStatus task = new ChangeStatus(new ChangeStatus.OnChangeStatusListener() {
+                @Override
+                public void finish(Integer result) {
+                    pd.dismiss();
+                    switch (result) {
+                        case Code.Success:
+                            Toast.makeText(ctxt, "Status is changed", Toast.LENGTH_SHORT).show();
+                            break;
+                        case Code.Fail:
+                            Toast.makeText(ctxt, "Status change fail", Toast.LENGTH_SHORT).show();
+                            break;
+                        case Code.NoResponse:
+                            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_noresponse), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }, PRSNo);
+            task.execute(status);
         } else {
             Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
         }
@@ -137,8 +168,6 @@ public class Act_Responses extends Activity {
 
     private void InitialSomething() {
         user = UserAccount.getUserAccount();
-        res = getResources();
-        conn = new HttpConnection();
         responses = new ArrayList<>();
         adapter = new ResponsesAdapter(ctxt, FLaborNo, CustomerNo, responses);
     }
@@ -150,6 +179,7 @@ public class Act_Responses extends Activity {
     }
 
     private void InitialAction() {
+
         bt_send.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Hardware.closeKeyBoard(ctxt, view);
@@ -159,6 +189,12 @@ public class Act_Responses extends Activity {
                 SendResponse(PRSNo + "", content, datetime, id);
             }
         });
+        lv_responses.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MyDialog.showTextDialog(ctxt, responses.get(position).getResponseContent());
+            }
+        });
+
         lv_responses.setAdapter(adapter);
     }
 

@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,10 +25,11 @@ import com.goldgrother.repeatmana.Adapter.ExpandListAdapter;
 import com.goldgrother.repeatmana.Adapter.ProblemListAdapter;
 import com.goldgrother.repeatmana.Asyn.LoadAllLastestResponse;
 import com.goldgrother.repeatmana.Asyn.LoadProblem;
+import com.goldgrother.repeatmana.Asyn.RegisterGCM;
 import com.goldgrother.repeatmana.Asyn.UploadPhoto;
-import com.goldgrother.repeatmana.Other.BitmapTransformer;
+import com.goldgrother.repeatmana.GcmForGB.GoldBrotherGCM;
 import com.goldgrother.repeatmana.Other.Code;
-import com.goldgrother.repeatmana.Other.FreeDialog;
+import com.goldgrother.repeatmana.Other.MyDialog;
 import com.goldgrother.repeatmana.Other.Hardware;
 import com.goldgrother.repeatmana.Other.HttpConnection;
 import com.goldgrother.repeatmana.Other.ProblemRecord;
@@ -36,6 +38,7 @@ import com.goldgrother.repeatmana.Other.UserAccount;
 import com.goldgrother.repeatmana.Other.Uti;
 import com.goldgrother.repeatmana.Other.Worker;
 import com.goldgrother.repeatmana.R;
+import com.goldgrother.repeatmana.Receiver.RefreshReceiver;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,17 +53,20 @@ import java.util.Set;
 /**
  * Created by v on 2016/1/1.
  */
-public class Act_MainScreen extends AppCompatActivity {
+public class Act_MainScreen extends AppCompatActivity implements GoldBrotherGCM.MagicLenGCMListener, RefreshReceiver.OnrefreshListener {
 
     private Context ctxt = Act_MainScreen.this;
     private HttpConnection con;
     private UserAccount user;
-    private static final int ActProblem = 0;
+    private GoldBrotherGCM mGBGCM;
+    private RefreshReceiver mRefreshReceiver;
+
+    private static final int ActResponse = 0;
     private static final int PICK_PICTURE = 1;
-    private static final int TAKE_PICTURE = 2;
-    private static final int TRIM_PICTURE = 3;
+    private static final int TRIM_PICTURE = 2;
     // UI
-    private Button bt_untreated, bt_processing, bt_completed, bt_image;
+    private Button bt_untreated, bt_processing, bt_completed;
+    private ImageView bt_image;
     private ListView lv_problems;
     private ExpandableListView elv_workers;
     // Adapter
@@ -83,10 +89,38 @@ public class Act_MainScreen extends AppCompatActivity {
         LoadingProblem(Code.Untreated);
     }
 
+    // implements methods
+    public void gcmRegistered(boolean successfull, String regID) {
+        if (successfull) {
+            Log.d("GCM", "Get RegID : " + regID);
+            //RegisterGCMTask(regID);
+        }
+    }
+
+    public boolean gcmSendRegistrationIdToAppServer(String regID) {
+        return true;
+    }
+
+    private void RegisterGCMTask(String id) {
+        if (Uti.isNetWork(ctxt)) {
+            final ProgressDialog fd = MyDialog.getProgressDialog(ctxt, "Loading...");
+            RegisterGCM task = new RegisterGCM(new RegisterGCM.OnRegisterGCMListener() {
+                public void finish(Integer result) {
+                    fd.dismiss();
+                    Log.i("RegisterGCM ", "Result : " + result);
+                }
+            });
+            task.execute(id, user.getUserID());
+        } else {
+            Toast.makeText(ctxt, getResources().getString(R.string.msg_err_network), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     private void LoadingProblem(final String status) {
         LastClickStatus = status;
         if (Uti.isNetWork(ctxt)) {
-            final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt, "Loading...");
+            final ProgressDialog pd = MyDialog.getProgressDialog(ctxt, "Loading...");
             LoadProblem task = new LoadProblem(con, new LoadProblem.OnLoadProblemListener() {
                 public void finish(Integer result, List<ProblemRecord> list) {
                     pd.dismiss();
@@ -95,9 +129,11 @@ public class Act_MainScreen extends AppCompatActivity {
                     Log.i("LoadingProblem", "Result:" + result);
                     switch (result) {
                         case Code.Success:
+                            Log.i("LoadingProblem", "111");
                             LoadAllLastestResponse(status);
                             break;
                         case Code.Empty:
+                            Log.i("LoadingProblem", "222");
                             if (status.equals(Code.Completed)) {
                                 refreshExpandList();
                             } else {
@@ -120,7 +156,7 @@ public class Act_MainScreen extends AppCompatActivity {
 
     private void LoadAllLastestResponse(final String status) {
         if (Uti.isNetWork(ctxt)) {
-            final ProgressDialog pd = FreeDialog.getProgressDialog(ctxt, "Loading...");
+            final ProgressDialog pd = MyDialog.getProgressDialog(ctxt, "Loading...");
             LoadAllLastestResponse task = new LoadAllLastestResponse(con, new LoadAllLastestResponse.OnLoadAllResponseListener() {
                 public void finish(Integer result, List<ProblemResponse> list) {
                     pd.dismiss();
@@ -236,9 +272,9 @@ public class Act_MainScreen extends AppCompatActivity {
 
     private String getCurrentDateStart(String status) {
         Calendar calendar = Calendar.getInstance();
-        if (status.equals(Code.Completed)) {
-            calendar.add(Calendar.MONTH, -12);
-        }
+        //if (status.equals(Code.Completed)) {
+        calendar.add(Calendar.MONTH, -12);
+        //}
         return new SimpleDateFormat("yyyy/MM/dd").format(calendar.getTime()) + " 00:00:00";
     }
 
@@ -249,7 +285,7 @@ public class Act_MainScreen extends AppCompatActivity {
 
     private void UploadPhoto(Bitmap photo) {
         if (Uti.isNetWork(ctxt)) {
-            final ProgressDialog fd = FreeDialog.getProgressDialog(ctxt, "Loading...");
+            final ProgressDialog fd = MyDialog.getProgressDialog(ctxt, "Loading...");
             UploadPhoto task = new UploadPhoto(con, new UploadPhoto.OnUpdatePhotoListener() {
                 public void finish(Integer result) {
                     fd.dismiss();
@@ -274,6 +310,19 @@ public class Act_MainScreen extends AppCompatActivity {
     }
 
     private void InitialAction() {
+        if (mGBGCM.getRegistrationId().isEmpty()) {
+            mGBGCM.setMagicLenGCMListener(this);
+            mGBGCM.openGCM();
+        } else {
+            Log.i("GCM", "Exist RegID : " + mGBGCM.getRegistrationId());
+            //RegisterGCMTask(mGBGCM.getRegistrationId());
+        }
+        //GCM Refresh
+        mRefreshReceiver.setOnrefreshListener(this);
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("Refresh");
+        registerReceiver(mRefreshReceiver, intentFilter);
         bt_untreated.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 LoadingProblem(Code.Untreated);
@@ -304,7 +353,7 @@ public class Act_MainScreen extends AppCompatActivity {
                 it.putExtra("PRSNo", pr.getPRSNo());
                 it.putExtra("FLaborNo", pr.getFLaborNo());
                 it.putExtra("CustomerNo", pr.getCustomerNo());
-                startActivityForResult(it, ActProblem);
+                startActivityForResult(it, ActResponse);
             }
         });
         lv_problems.setAdapter(list_adapter);
@@ -328,7 +377,7 @@ public class Act_MainScreen extends AppCompatActivity {
         bt_untreated = (Button) findViewById(R.id.bt_main_untreated);
         bt_processing = (Button) findViewById(R.id.bt_main_processing);
         bt_completed = (Button) findViewById(R.id.bt_main_completed);
-        bt_image = (Button) findViewById(R.id.bt_main_image);
+        bt_image = (ImageView) findViewById(R.id.bt_main_image);
         lv_problems = (ListView) findViewById(R.id.lv_problems);
         elv_workers = (ExpandableListView) findViewById(R.id.elv_workers);
     }
@@ -341,6 +390,9 @@ public class Act_MainScreen extends AppCompatActivity {
         list_workers = new ArrayList<>();
         list_adapter = new ProblemListAdapter(ctxt, problemlist);
         exlist_adapter = new ExpandListAdapter(ctxt, list_workers);
+
+        mGBGCM = new GoldBrotherGCM(this, this);
+        mRefreshReceiver = new RefreshReceiver();
     }
 
     protected void doCropPhoto(Uri data) {
@@ -368,15 +420,12 @@ public class Act_MainScreen extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case ActProblem:
+                case ActResponse:
                     LoadingProblem(LastClickStatus);
                     break;
                 case PICK_PICTURE:
                     Uri uri = data.getData();
                     doCropPhoto(uri);
-                    break;
-                case TAKE_PICTURE:
-                    Bitmap iBitmap = (Bitmap) data.getExtras().get("data");
                     break;
                 case TRIM_PICTURE:
                     final Bitmap result = data.getParcelableExtra("data");
@@ -394,6 +443,18 @@ public class Act_MainScreen extends AppCompatActivity {
     }
 
     private long lastpresstime = 0;
+
+
+    @Override
+    public void setRefresh(String text) {
+        Toast.makeText(ctxt, text, Toast.LENGTH_SHORT).show();
+        LoadingProblem(LastClickStatus);
+    }
+
+    public void onDestroy() {
+        unregisterReceiver(mRefreshReceiver);
+        super.onDestroy();
+    }
 
     @Override
     public void onBackPressed() {

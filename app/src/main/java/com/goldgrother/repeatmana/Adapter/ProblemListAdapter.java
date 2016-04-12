@@ -1,6 +1,7 @@
 package com.goldgrother.repeatmana.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,6 +18,11 @@ import com.goldgrother.repeatmana.Other.UserAccount;
 import com.goldgrother.repeatmana.Other.Uti;
 import com.goldgrother.repeatmana.R;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -69,14 +75,16 @@ public class ProblemListAdapter extends MyBaseAdapter {
         // setText
         tag.name.setText(item.getResponseID());
         tag.content.setText(item.getResponseContent());
-        tag.datetime.setText(MyTime.convertTime(item.getResponseDate()));
+
+        tag.datetime.setText(item.getResponseDate() != null ? MyTime.convertTimeForProblem(item.getResponseDate()) : "");
+        // set status
         if (item.getProblemStatus() != null) {
             switch (item.getProblemStatus()) {
                 case Code.Untreated:
-                    tag.status.setBackground(getResources().getDrawable(R.drawable.status_untreated));
+                    tag.status.setBackground(getResources().getDrawable(R.drawable.status_untreate));
                     break;
                 case Code.Processing:
-                    //tag.status.setBackground(getResources().getDrawable(R.drawable.item_bg_processing));
+                    tag.status.setBackground(getResources().getDrawable(R.drawable.status_processing));
                     break;
                 case Code.Completed:
                     tag.status.setBackground(getResources().getDrawable(R.drawable.status_completed));
@@ -100,4 +108,6 @@ public class ProblemListAdapter extends MyBaseAdapter {
         public TextView datetime;
         public ImageView status;
     }
+
+
 }

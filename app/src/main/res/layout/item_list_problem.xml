@@ -9,26 +9,20 @@
         android:layout_height="70dp"
         android:orientation="horizontal">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/img_item_photo"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:src="@drawable/people"
-            android:id="@+id/img_item_photo" />
+            app:civ_border_color="#FF000000" />
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp">
 
-
-            <ImageView
-                android:id="@+id/img_item_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right|bottom"
-                android:background="@drawable/status_completed" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -37,7 +31,8 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
 
                     <TextView
                         android:id="@+id/tv_item_name"
@@ -57,19 +52,37 @@
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
+                        android:layout_marginRight="5dp"
                         android:gravity="right"
-                        android:text="7:30 a.m."
+                        android:text="2016/01/01 17:30"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textSize="12sp" />
                 </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/tv_item_responsecontent"
-                    android:layout_width="200dp"
-                    android:layout_height="match_parent"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="Content"
-                    android:textSize="14sp" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tv_item_responsecontent"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_toLeftOf="@+id/img_item_status"
+                        android:layout_toStartOf="@+id/img_item_status"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text="Content"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:id="@+id/img_item_status"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/status_completed" />
+                </RelativeLayout>
             </LinearLayout>
         </FrameLayout>
     </LinearLayout>

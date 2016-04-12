@@ -3,7 +3,6 @@ package com.goldgrother.repeatmana.Asyn;
 import android.os.AsyncTask;
 import android.util.Log;
 
-
 import com.goldgrother.repeatmana.Other.Code;
 import com.goldgrother.repeatmana.Other.HttpConnection;
 import com.goldgrother.repeatmana.Other.URLs;
@@ -17,43 +16,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by hao_jun on 2016/2/18.
+ * Created by v on 2016/2/17.
  */
-public class SendResponse extends AsyncTask<String, Integer, Integer> {
-    public interface OnSendResponseListener {
+public class RegisterGCM extends AsyncTask<String, Integer, Integer> {
+    public interface OnRegisterGCMListener {
         void finish(Integer result);
     }
 
-    private final OnSendResponseListener mListener;
-    private String PRSNo;
-    private String ResponseContent;
-    private String ResponseDate;
-    private String ResponseID;
+    private OnRegisterGCMListener mListener;
 
-    public SendResponse(OnSendResponseListener mListener) {
+    public RegisterGCM(OnRegisterGCMListener mListener) {
         this.mListener = mListener;
     }
 
     @Override
     protected Integer doInBackground(String... datas) {
         Integer result = Code.NoResponse;
-        PRSNo = datas[0];
-        ResponseContent = datas[1];
-        ResponseDate = datas[2];
-        ResponseID = datas[3];
         try {
+            Log.i("RegisterGCM", datas[0]);
+            Log.i("RegisterGCM", datas[1]);
             List<NameValuePair> params = new ArrayList<>();
-            params.add(new BasicNameValuePair("PRSNo", PRSNo));
-            params.add(new BasicNameValuePair("ResponseContent", ResponseContent));
-            params.add(new BasicNameValuePair("ResponseDate", ResponseDate));
-            params.add(new BasicNameValuePair("ResponseID", ResponseID));
-            params.add(new BasicNameValuePair("ResponseRole", Code.Manager));
-            JSONObject jobj = new HttpConnection().PostGetJson(URLs.url_addresponse, params);
+            params.add(new BasicNameValuePair("GCMid", datas[0]));
+            params.add(new BasicNameValuePair("UserId", datas[1]));
+            JSONObject jobj = new HttpConnection().PostGetJson(URLs.url_gcm_register, params);
             if (jobj != null) {
                 result = jobj.getInt("success");
             }
         } catch (JSONException e) {
-            Log.i("SendResponse", e.toString());
+            e.printStackTrace();
+            Log.i("RegisterGCM", e.toString());
         }
         return result;
     }

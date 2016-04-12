@@ -27,4 +27,11 @@ public class URLs {
      */
     public static final String url_loadimage = serverip + "pb_loadimage";
     public static final String url_uploadimage = serverip + "pb_uploadImage";
+    /**
+     *
+     */
+    public static final String url_changestatus = serverip + "pb_changestatus";
+
+    public static final String url_gcm_register = serverip + "gcm_signup_mana";
+
 }
