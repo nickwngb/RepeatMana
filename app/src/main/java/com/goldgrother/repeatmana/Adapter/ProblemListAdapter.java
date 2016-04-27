@@ -1,6 +1,7 @@
 package com.goldgrother.repeatmana.Adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,7 +94,9 @@ public class ProblemListAdapter extends MyBaseAdapter {
         }
         if (item.getResponseRole() != null) {
             if (item.getResponseRole().equals(Code.Manager)) {
-                tag.photo.setImageBitmap(BitmapTransformer.Base64ToBitmap(UserAccount.getUserAccount().getPhoto()));
+                Bitmap photo = BitmapTransformer.Base64ToBitmap(UserAccount.getUserAccount().getPhoto());
+                if (photo != null)
+                    tag.photo.setImageBitmap(photo);
             } else {
                 imageLoader.DisplayImage(item.getCustomerNo(), item.getFLaborNo(), tag.photo);
             }

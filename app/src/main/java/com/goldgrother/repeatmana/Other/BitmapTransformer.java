@@ -12,6 +12,9 @@ import java.io.ByteArrayOutputStream;
  */
 
 public class BitmapTransformer {
+	private static final String plus = "+";
+    private static final String plusUnicode = "%20";
+	
     public static String BitmapToBase64(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
@@ -21,8 +24,13 @@ public class BitmapTransformer {
     }
 
     public static Bitmap Base64ToBitmap(String base64) {
-        byte[] decodedString = Base64.decode(base64, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        try {
+			base64 = base64.replace(plusUnicode, plus);
+            byte[] decodedString = Base64.decode(base64, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        }catch (Exception ex){
+            return null;
+        }
     }
 
     public static Bitmap ResizeBitmap(Bitmap bmp, int newWidth, int newHeight) {

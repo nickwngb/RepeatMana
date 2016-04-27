@@ -1,6 +1,7 @@
 package com.goldgrother.repeatmana.Adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -72,7 +73,9 @@ public class ResponsesAdapter extends MyBaseAdapter {
         if (item.getResponseRole().equals(Code.Flabor)) {
             imageLoader.DisplayImage(CustomerNo, FLaborNo, tag.f_photo);
         } else {
-            tag.f_photo.setImageBitmap(BitmapTransformer.Base64ToBitmap(UserAccount.getUserAccount().getPhoto()));
+            Bitmap photo = BitmapTransformer.Base64ToBitmap(UserAccount.getUserAccount().getPhoto());
+            if (photo != null)
+                tag.f_photo.setImageBitmap(photo);
         }
         tag.f_name.setText(item.getResponseID());
         tag.f_datetime.setText(MyTime.convertTimeForResponse(item.getResponseDate()));
