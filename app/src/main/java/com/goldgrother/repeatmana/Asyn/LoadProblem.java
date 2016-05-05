@@ -46,10 +46,6 @@ public class LoadProblem extends AsyncTask<String, Integer, Integer> {
         endDay = datas[1];
         status = datas[2];
         dormId = datas[3];
-        Log.d("LoadProblem",startDay);
-        Log.d("LoadProblem",endDay);
-        Log.d("LoadProblem",status);
-        Log.d("LoadProblem",dormId);
         try {
             // put "phone" post out, get json
             List<NameValuePair> postFields = new ArrayList<>();

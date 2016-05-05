@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.goldgrother.repeatmana.Activity.Act_Login;
 import com.goldgrother.repeatmana.GcmForGB.GoldBrotherGCM;
+import com.goldgrother.repeatmana.Other.Code;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
@@ -35,16 +36,20 @@ public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
                 i.setAction("android.intent.action.MAIN");
                 i.addCategory("android.intent.category.LAUNCHER");
                 // send a Notification
-                GoldBrotherGCM.sendLocalNotification(context, NOTIFICATION_ID, extras.getString("message"),
-                        PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_CANCEL_CURRENT));
-                // push a intent to refresh reveiver
-                Intent refresh_intent = new Intent();
-                // name = 'Refresh'
-                refresh_intent.setAction("Refresh");
-                // datas
-                refresh_intent.putExtra("message", extras.getString("message"));
-                // send
-                context.sendBroadcast(refresh_intent);
+                String who = extras.getString("who");
+                String message = extras.getString("message");
+                if(who.equals(Code.Manager)){
+                    GoldBrotherGCM.sendLocalNotification(context, NOTIFICATION_ID, message,
+                            PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_CANCEL_CURRENT));
+                    // push a intent to refresh reveiver
+                    Intent refresh_intent = new Intent();
+                    // name = 'Refresh'
+                    refresh_intent.setAction("Refresh");
+                    // datas
+                    refresh_intent.putExtra("message", message);
+                    // send
+                    context.sendBroadcast(refresh_intent);
+                }
             }
         }
         setResultCode(Activity.RESULT_OK);

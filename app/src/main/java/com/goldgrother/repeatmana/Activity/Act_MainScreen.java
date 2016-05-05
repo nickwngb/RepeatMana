@@ -53,7 +53,7 @@ import java.util.Set;
 /**
  * Created by v on 2016/1/1.
  */
-public class Act_MainScreen extends AppCompatActivity implements GoldBrotherGCM.MagicLenGCMListener, RefreshReceiver.OnrefreshListener {
+public class Act_MainScreen extends AppCompatActivity implements GoldBrotherGCM.MagicLenGCMListener, RefreshReceiver.OnrefreshListener, View.OnClickListener {
 
     private Context ctxt = Act_MainScreen.this;
     private HttpConnection con;
@@ -92,8 +92,8 @@ public class Act_MainScreen extends AppCompatActivity implements GoldBrotherGCM.
     // implements methods
     public void gcmRegistered(boolean successfull, String regID) {
         if (successfull) {
-            Log.d("GCM", "Get RegID : " + regID);
-            //RegisterGCMTask(regID);
+            Log.d("GCM", "GetFromGoogle:" + regID);
+            RegisterGCMTask(regID);
         }
     }
 
@@ -103,11 +103,9 @@ public class Act_MainScreen extends AppCompatActivity implements GoldBrotherGCM.
 
     private void RegisterGCMTask(String id) {
         if (Uti.isNetWork(ctxt)) {
-            final ProgressDialog fd = MyDialog.getProgressDialog(ctxt, "Loading...");
             RegisterGCM task = new RegisterGCM(new RegisterGCM.OnRegisterGCMListener() {
                 public void finish(Integer result) {
-                    fd.dismiss();
-                    Log.i("RegisterGCM ", "Result : " + result);
+                    Log.d("GCM", "RegisterResult:" + result);
                 }
             });
             task.execute(id, user.getUserID());
@@ -118,7 +116,7 @@ public class Act_MainScreen extends AppCompatActivity implements GoldBrotherGCM.
 
 
     private void LoadingProblem(final String status) {
-        LastClickStatus = status;
+
         if (Uti.isNetWork(ctxt)) {
             final ProgressDialog pd = MyDialog.getProgressDialog(ctxt, "Loading...");
             LoadProblem task = new LoadProblem(con, new LoadProblem.OnLoadProblemListener() {
@@ -309,13 +307,50 @@ public class Act_MainScreen extends AppCompatActivity implements GoldBrotherGCM.
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.bt_main_untreated:
+                LastClickStatus = Code.Untreated;
+                LoadingProblem(LastClickStatus);
+                break;
+            case R.id.bt_main_processing:
+                LastClickStatus = Code.Processing;
+                LoadingProblem(Code.Processing);
+                break;
+            case R.id.bt_main_completed:
+                LastClickStatus = Code.Completed;
+                LoadingProblem(Code.Completed);
+                break;
+        }
+        changeButtonColor();
+    }
+
+    private void changeButtonColor() {
+        int selected = getResources().getColor(R.color.tabSelected);
+        int unSelected = getResources().getColor(R.color.tabUnselected);
+        if (LastClickStatus.equals(Code.Untreated)) {
+            bt_untreated.setTextColor(selected);
+            bt_processing.setTextColor(unSelected);
+            bt_completed.setTextColor(unSelected);
+        } else if (LastClickStatus.equals(Code.Processing)) {
+            bt_untreated.setTextColor(unSelected);
+            bt_processing.setTextColor(selected);
+            bt_completed.setTextColor(unSelected);
+        } else if (LastClickStatus.equals(Code.Completed)) {
+            bt_untreated.setTextColor(unSelected);
+            bt_processing.setTextColor(unSelected);
+            bt_completed.setTextColor(selected);
+        }
+    }
+
     private void InitialAction() {
         if (mGBGCM.getRegistrationId().isEmpty()) {
             mGBGCM.setMagicLenGCMListener(this);
             mGBGCM.openGCM();
         } else {
             Log.i("GCM", "Exist RegID : " + mGBGCM.getRegistrationId());
-            //RegisterGCMTask(mGBGCM.getRegistrationId());
+            RegisterGCMTask(mGBGCM.getRegistrationId());
         }
         //GCM Refresh
         mRefreshReceiver.setOnrefreshListener(this);
@@ -323,21 +358,9 @@ public class Act_MainScreen extends AppCompatActivity implements GoldBrotherGCM.
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("Refresh");
         registerReceiver(mRefreshReceiver, intentFilter);
-        bt_untreated.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                LoadingProblem(Code.Untreated);
-            }
-        });
-        bt_processing.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                LoadingProblem(Code.Processing);
-            }
-        });
-        bt_completed.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                LoadingProblem(Code.Completed);
-            }
-        });
+        bt_untreated.setOnClickListener(this);
+        bt_processing.setOnClickListener(this);
+        bt_completed.setOnClickListener(this);
         bt_image.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Hardware.closeKeyBoard(ctxt, v);
@@ -391,7 +414,7 @@ public class Act_MainScreen extends AppCompatActivity implements GoldBrotherGCM.
         list_adapter = new ProblemListAdapter(ctxt, problemlist);
         exlist_adapter = new ExpandListAdapter(ctxt, list_workers);
 
-        mGBGCM = new GoldBrotherGCM(this, this);
+        mGBGCM = new GoldBrotherGCM(this);
         mRefreshReceiver = new RefreshReceiver();
     }
 
@@ -447,7 +470,7 @@ public class Act_MainScreen extends AppCompatActivity implements GoldBrotherGCM.
 
     @Override
     public void setRefresh(String text) {
-        Toast.makeText(ctxt, text, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ctxt, text, Toast.LENGTH_SHORT).show();
         LoadingProblem(LastClickStatus);
     }
 
@@ -465,4 +488,6 @@ public class Act_MainScreen extends AppCompatActivity implements GoldBrotherGCM.
             Toast.makeText(ctxt, "Press again to leave", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 }

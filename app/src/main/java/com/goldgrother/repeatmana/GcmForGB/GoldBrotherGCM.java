@@ -11,6 +11,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 
@@ -72,19 +74,18 @@ public class GoldBrotherGCM {
      */
     public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
-
     public static void sendLocalNotification(Context context, int notifyID, String msg, PendingIntent pendingIntent) {
         NotificationManager mNotificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationCompat.Builder b = new NotificationCompat.Builder(context);
+
         b.setSmallIcon(R.drawable.icon);
+        b.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.icon));
+        b.setColor(context.getResources().getColor(R.color.topic1));
         b.setContentTitle(context.getResources().getString(R.string.app_name));
+        b.setContentText(msg);
         b.setAutoCancel(true);
-        //long[] vibrates = {1000,500,1000,400,1000,300,1000,200,1000,100};
-        //b.setVibrate(vibrates);
-        //b.setContentInfo("Info");
-        //b.setDefaults(Notification.DEFAULT_ALL);
 
         if (msg.length() > 10) {
             b.setStyle(new NotificationCompat.BigTextStyle()

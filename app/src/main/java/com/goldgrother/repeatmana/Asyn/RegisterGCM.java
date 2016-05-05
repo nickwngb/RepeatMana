@@ -33,18 +33,16 @@ public class RegisterGCM extends AsyncTask<String, Integer, Integer> {
     protected Integer doInBackground(String... datas) {
         Integer result = Code.NoResponse;
         try {
-            Log.i("RegisterGCM", datas[0]);
-            Log.i("RegisterGCM", datas[1]);
             List<NameValuePair> params = new ArrayList<>();
             params.add(new BasicNameValuePair("GCMid", datas[0]));
-            params.add(new BasicNameValuePair("UserId", datas[1]));
+            params.add(new BasicNameValuePair("UserID", datas[1]));
             JSONObject jobj = new HttpConnection().PostGetJson(URLs.url_gcm_register, params);
             if (jobj != null) {
                 result = jobj.getInt("success");
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.i("RegisterGCM", e.toString());
+            Log.d("RegisterGCM", e.toString());
         }
         return result;
     }
